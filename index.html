@@ -4,15 +4,15 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-    <meta name="theme-color" content="#0b1026">
-    <title>FLIPSIDE — Seven Skies</title>
+    <meta name="theme-color" content="#ede3c9">
+    <title>Patchwing — Bramble Post</title>
+
     <style>
         :root {
-            color-scheme: dark;
-            --ink: #f6f5ff;
-            --muted: #b2b6cf;
-            --accent: #a8ffdf;
-            --line: rgba(255, 255, 255, .13);
+            --paper: #f5ecd6;
+            --ink: #413e33;
+            --red: #ae5140;
+            --green: #65745b;
         }
 
         * {
@@ -25,1729 +25,1451 @@
             width: 100%;
             height: 100%;
             overflow: hidden;
-            background: #080c1b;
+            background: #e9dfc7;
             color: var(--ink);
-            font-family: Inter, ui-sans-serif, system-ui, -apple-system, sans-serif;
-        }
-
-        button,
-        select {
-            font: inherit;
+            font-family: Georgia, "Times New Roman", serif;
         }
 
         button {
-            color: inherit;
-            cursor: pointer;
-            -webkit-tap-highlight-color: transparent;
+            font: inherit;
         }
 
-        button:focus-visible,
-        select:focus-visible {
-            outline: 3px solid var(--accent);
-            outline-offset: 4px;
-        }
-
-        button:disabled {
-            cursor: default;
-            opacity: .4;
+        button:focus-visible {
+            outline: 3px solid var(--red);
+            outline-offset: 5px;
         }
 
         [hidden] {
             display: none !important;
         }
 
-        #game {
+        #world {
             position: fixed;
             inset: 0;
+            display: block;
             width: 100%;
             height: 100%;
-            display: block;
             touch-action: none;
         }
 
-        .overlay {
+        .screen {
             position: fixed;
             inset: 0;
-            z-index: 10;
-            display: flex;
-            align-items: center;
-            justify-content: center;
+            display: grid;
+            place-items: center;
             padding: 24px;
-            background: linear-gradient(125deg, #080c1bec, #080c1b85);
-            overflow: auto;
-            overscroll-behavior: contain;
+            overflow-y: auto;
+            background: #ede3c930;
         }
 
-        .shell {
-            width: min(1060px, 100%);
+        .paper {
+            position: relative;
+            width: min(470px, 100%);
             margin: auto;
+            padding: 36px;
+            background:
+                repeating-linear-gradient(0deg,
+                    transparent 0px,
+                    transparent 5px,
+                    #614e2504 6px),
+                var(--paper);
+            border: 1px solid #786e4b60;
+            box-shadow:
+                3px 4px 0 #c7baa0,
+                4px 5px 0 #786e4b60,
+                12px 18px 35px #44391d24;
+            transform: rotate(-1deg);
+        }
+
+        .paper::before {
+            content: "";
+            position: absolute;
+            width: 112px;
+            height: 27px;
+            left: calc(50% - 56px);
+            top: -14px;
+            background: #d6c69bba;
+            border-left: 2px dotted #eee2c5;
+            border-right: 2px dotted #eee2c5;
+            transform: rotate(-5deg);
+        }
+
+        .postmark {
+            position: absolute;
+            right: 22px;
+            top: 23px;
+            width: 68px;
+            height: 68px;
+            border: 2px solid #a9554480;
+            border-radius: 50%;
+            outline: 1px solid #a9554450;
+            outline-offset: -7px;
+            display: grid;
+            place-content: center;
+            text-align: center;
+            transform: rotate(15deg);
+            color: #a95544;
+            font: 9px/1.7 monospace;
+            letter-spacing: .08em;
         }
 
         .eyebrow {
-            color: var(--accent);
-            font-size: 11px;
-            font-weight: 800;
-            letter-spacing: .24em;
+            font: 10px/1.6 monospace;
+            letter-spacing: .18em;
             text-transform: uppercase;
-        }
-
-        .brandline {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            gap: 16px;
-        }
-
-        .brand-icon {
-            display: inline-grid;
-            place-items: center;
-            width: 35px;
-            height: 35px;
-            border-radius: 11px;
-            background: var(--accent);
-            color: #102236;
-            font-size: 24px;
-            margin-right: 12px;
-            vertical-align: middle;
-            transform: rotate(-8deg);
+            color: #776f59;
         }
 
         h1 {
-            font-size: clamp(48px, 8vw, 96px);
-            line-height: .95;
-            letter-spacing: -.085em;
-            margin: 24px 0 14px;
-            font-weight: 950;
+            font-size: clamp(46px, 10vw, 69px);
+            font-weight: normal;
+            letter-spacing: -.065em;
+            line-height: 1;
+            margin: 36px 0 6px;
         }
 
-        h1 span {
-            color: var(--accent);
+        .subtitle {
+            font-style: italic;
+            color: var(--red);
+            font-size: 20px;
+            margin-bottom: 27px;
         }
 
-        .intro {
-            color: var(--muted);
-            max-width: 650px;
-            line-height: 1.65;
-            margin: 0 0 23px;
+        p {
             font-size: 15px;
+            line-height: 1.75;
+            color: #6a624f;
         }
 
-        .section-label {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            margin: 20px 0 12px;
-            font-size: 11px;
-            color: var(--muted);
-            letter-spacing: .14em;
-            text-transform: uppercase;
+        .rule {
+            border: 0;
+            border-top: 1px solid #9b90724d;
+            margin: 23px 0;
         }
 
-        .maps {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 10px;
+        .note {
+            padding-left: 13px;
+            border-left: 2px solid #ae514070;
+            font-style: italic;
+            font-size: 14px;
         }
 
-        .map {
-            position: relative;
-            padding: 0;
-            overflow: hidden;
-            text-align: left;
-            border: 1px solid var(--line);
-            border-radius: 15px;
-            background: #11182b;
-            transition: transform .18s, border-color .18s;
-        }
-
-        .map:hover {
-            transform: translateY(-3px);
-            border-color: #ffffff70;
-        }
-
-        .map.selected {
-            border-color: var(--accent);
-            box-shadow: 0 0 0 1px var(--accent), 0 6px 28px #a8ffdf12;
-        }
-
-        .map canvas {
-            display: block;
-            width: 100%;
-            height: 79px;
-        }
-
-        .map-info {
-            padding: 10px 12px 12px;
-        }
-
-        .map-name {
-            font-weight: 750;
-            font-size: 13px;
-        }
-
-        .map-desc {
-            color: var(--muted);
-            font-size: 10px;
-            margin-top: 4px;
-        }
-
-        .map-num {
-            position: absolute;
-            right: 9px;
-            top: 8px;
-            font-size: 10px;
-            background: #09122690;
-            padding: 4px 6px;
-            border-radius: 5px;
-        }
-
-        .launch-row {
-            display: flex;
-            gap: 12px;
-            align-items: center;
-            flex-wrap: wrap;
-            margin-top: 23px;
-        }
-
-        .primary,
-        .secondary,
-        .small {
-            border-radius: 12px;
-            padding: 14px 22px;
-            font-weight: 750;
-            border: 1px solid var(--line);
-            transition: filter .15s, transform .15s;
-        }
-
-        .primary {
-            background: var(--accent);
-            color: #102336;
-            border-color: transparent;
-            box-shadow: 0 5px 28px #a8ffdf18;
-        }
-
-        .primary:hover {
-            filter: brightness(1.08);
-            transform: translateY(-1px);
-        }
-
-        .secondary,
-        .small {
-            background: #ffffff08;
-        }
-
-        .small {
-            padding: 9px 12px;
-            font-size: 11px;
-        }
-
-        select {
-            background: #11192b;
-            border: 1px solid var(--line);
-            padding: 14px;
-            border-radius: 12px;
+        .button {
+            cursor: pointer;
+            border: 1px solid #594c37;
+            padding: 12px 19px;
+            background: #eee2c5;
             color: var(--ink);
+            box-shadow: 2px 3px 0 #8f80634d;
+            transition: transform .12s;
+            touch-action: manipulation;
         }
 
-        .record {
-            margin-left: auto;
-            color: var(--muted);
-            font-size: 12px;
+        .button:hover {
+            transform: translateY(-2px) rotate(-1deg);
         }
 
-        .record strong {
-            color: white;
-            font-size: 22px;
-            margin-left: 8px;
+        .button:active {
+            transform: translateY(1px);
         }
 
-        .instructions {
+        .button.primary {
+            color: #fff4dc;
+            background: var(--red);
+            border-color: #763c31;
+            box-shadow: 2px 3px 0 #733c3040;
+        }
+
+        .actions {
             display: flex;
+            gap: 10px;
             flex-wrap: wrap;
-            gap: 10px 22px;
-            border-top: 1px solid var(--line);
-            padding-top: 17px;
-            margin-top: 22px;
-            font-size: 11px;
-            color: var(--muted);
+            margin-top: 24px;
         }
 
-        kbd {
-            display: inline-block;
-            padding: 3px 6px;
-            border-radius: 5px;
-            border: 1px solid #ffffff25;
-            color: white;
-            font-family: inherit;
-            margin-right: 4px;
+        .smallprint {
+            margin-top: 21px;
+            font: 10px/1.9 monospace;
+            color: #82775e;
         }
 
         #hud {
             position: fixed;
-            z-index: 3;
-            top: 0;
-            left: 0;
-            right: 0;
-            padding: max(18px, env(safe-area-inset-top)) 22px 16px;
+            inset: 0 0 auto;
+            padding:
+                max(18px, env(safe-area-inset-top)) 22px 12px;
             display: flex;
-            justify-content: space-between;
             align-items: flex-start;
+            justify-content: space-between;
             pointer-events: none;
-            background: linear-gradient(#050b2080, transparent);
         }
 
-        .hud-left {
-            display: flex;
-            align-items: center;
-            gap: 22px;
+        .ticket {
+            background: #f6edd9ed;
+            border: 1px solid #75674460;
+            box-shadow: 2px 3px 0 #67533115;
+            padding: 10px 15px;
+            transform: rotate(-2deg);
         }
 
-        .score-label {
-            color: #ffffffaa;
-            font-size: 9px;
-            letter-spacing: .2em;
+        .ticket-title {
+            font: 9px monospace;
+            text-transform: uppercase;
+            letter-spacing: .13em;
+            color: #8a765b;
         }
 
         #score {
-            font-size: 36px;
-            font-weight: 850;
-            line-height: 1.1;
+            font-size: 23px;
+            margin-top: 3px;
         }
 
-        #mapLabel {
-            font-size: 12px;
-            font-weight: 750;
+        #progress {
+            font: 10px monospace;
+            color: #85765d;
+            margin-top: 4px;
         }
 
-        #runInfo {
-            font-size: 10px;
-            color: #ffffffb0;
-            margin-top: 5px;
-        }
-
-        .hud-right {
+        .hud-actions {
             display: flex;
-            align-items: center;
             gap: 8px;
             pointer-events: auto;
         }
 
-        .hud-button {
-            border: 1px solid #ffffff25;
-            border-radius: 10px;
-            background: #09132680;
-            padding: 10px 13px;
-            backdrop-filter: blur(12px);
-            font-size: 12px;
+        .hud-actions button {
+            background: #f6edd9d9;
+            border: 1px solid #75674460;
+            padding: 9px 12px;
+            color: #5c503e;
+            cursor: pointer;
+            font: 11px monospace;
         }
 
-        #bottom {
+        #hint {
             position: fixed;
-            bottom: max(18px, env(safe-area-inset-bottom));
-            left: 22px;
-            right: 22px;
-            z-index: 3;
+            top: 125px;
+            left: 16px;
+            right: 16px;
+            text-align: center;
+            font-style: italic;
+            font-size: 16px;
+            color: #605944;
+            pointer-events: none;
+            text-shadow: 0 1px #fff5df;
+        }
+
+        #controls {
+            position: fixed;
+            bottom: max(20px, env(safe-area-inset-bottom));
+            left: 20px;
+            right: 20px;
             display: flex;
             justify-content: space-between;
             align-items: flex-end;
             pointer-events: none;
-            gap: 16px;
         }
 
-        .energy-panel {
-            background: #070f228c;
-            border: 1px solid #ffffff1f;
-            backdrop-filter: blur(14px);
-            padding: 12px 14px;
-            border-radius: 14px;
-            width: 190px;
-            flex-shrink: 0;
+        .control-note {
+            max-width: 190px;
+            color: #5f614b;
+            font-size: 13px;
+            line-height: 1.6;
+            font-style: italic;
         }
 
-        .energy-top {
+        .control-buttons {
             display: flex;
-            justify-content: space-between;
-            font-size: 10px;
-        }
-
-        #energyText {
-            color: var(--accent);
-        }
-
-        .energy-track {
-            height: 5px;
-            background: #ffffff16;
-            border-radius: 9px;
-            margin-top: 8px;
-            overflow: hidden;
-        }
-
-        #energyFill {
-            height: 100%;
-            width: 100%;
-            background: var(--accent);
-        }
-
-        #gravityLabel {
-            font-size: 9px;
-            color: #ffffffa0;
-            margin-top: 8px;
-        }
-
-        .touch-controls {
-            display: flex;
-            gap: 8px;
+            gap: 12px;
             pointer-events: auto;
         }
 
-        .touch-controls button {
-            background: #0a1429b0;
-            border: 1px solid #ffffff32;
-            color: #fff;
-            border-radius: 15px;
-            min-width: 67px;
-            height: 57px;
-            font-size: 11px;
-            font-weight: 800;
+        .control-buttons button {
+            min-width: 83px;
+            min-height: 61px;
             touch-action: none;
-            backdrop-filter: blur(12px);
         }
 
-        .touch-controls button:last-child {
-            background: #a8ffdf;
-            color: #102336;
-            min-width: 82px;
-        }
-
-        .touch-controls small {
+        .control-buttons small {
             display: block;
-            font-size: 8px;
-            opacity: .6;
-            margin-top: 4px;
+            font: 9px monospace;
+            margin-top: 5px;
+            opacity: .75;
         }
 
-        #toast {
-            position: fixed;
-            z-index: 4;
-            top: 105px;
-            left: 50%;
-            transform: translateX(-50%);
-            text-align: center;
-            pointer-events: none;
-            color: white;
-            font-size: 12px;
-            letter-spacing: .08em;
-            text-shadow: 0 2px 12px #000;
-            width: 90%;
-            transition: opacity .25s;
-            opacity: 0;
+        h2 {
+            font-size: 35px;
+            font-weight: normal;
+            letter-spacing: -.04em;
+            margin: 19px 0 10px;
         }
 
-        .dialog {
-            width: min(440px, 100%);
-            text-align: center;
-            background: linear-gradient(145deg, #17213cf5, #0b1024f5);
-            border: 1px solid #ffffff20;
-            padding: 34px;
-            border-radius: 25px;
-            box-shadow: 0 30px 100px #0007;
-        }
-
-        .dialog h2 {
-            font-size: 36px;
-            letter-spacing: -.05em;
-            margin: 12px 0;
-        }
-
-        .dialog p {
-            color: var(--muted);
-            font-size: 13px;
-            line-height: 1.7;
-        }
-
-        #finalScore {
-            font-size: 76px;
-            font-weight: 900;
-            letter-spacing: -.07em;
-        }
-
-        .stats {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 8px;
-            margin: 18px 0 23px;
-        }
-
-        .stat {
-            background: #ffffff06;
-            border-radius: 12px;
-            padding: 12px 5px;
-        }
-
-        .stat strong {
-            display: block;
-            font-size: 21px;
-        }
-
-        .stat span {
-            font-size: 9px;
-            color: var(--muted);
-            text-transform: uppercase;
-        }
-
-        .dialog-actions {
+        .results {
             display: flex;
-            gap: 10px;
-            justify-content: center;
+            gap: 24px;
+            padding: 18px 0;
+            border-top: 1px dashed #93846370;
+            border-bottom: 1px dashed #93846370;
+            margin-top: 22px;
         }
 
-        @media(max-width: 650px) {
-            .overlay {
-                padding: 20px 16px;
+        .results strong {
+            font-size: 30px;
+            font-weight: normal;
+            display: block;
+        }
+
+        .results span {
+            font: 9px monospace;
+            text-transform: uppercase;
+            color: #827359;
+        }
+
+        @media (max-width: 520px) {
+            .screen {
+                padding: 23px;
             }
 
-            .maps {
-                grid-template-columns: repeat(2, 1fr);
+            .paper {
+                padding: 27px;
             }
 
-            .map canvas {
-                height: 65px;
+            .postmark {
+                width: 55px;
+                height: 55px;
+                font-size: 8px;
             }
 
-            h1 {
-                margin-top: 20px;
+            .control-note {
+                max-width: 115px;
+                font-size: 11px;
             }
 
-            .intro {
-                font-size: 12px;
-                margin-bottom: 10px;
+            #controls {
+                left: 13px;
+                right: 13px;
             }
 
-            .map-info {
-                padding: 8px 10px;
+            .control-buttons {
+                gap: 8px;
             }
 
-            .map-name {
-                font-size: 12px;
-            }
-
-            .map-desc {
-                font-size: 9px;
-            }
-
-            .brandline .eyebrow {
-                font-size: 9px;
-                letter-spacing: .13em;
-            }
-
-            .brand-icon {
-                width: 28px;
-                height: 28px;
-                margin-right: 7px;
-            }
-
-            .record {
-                display: none;
-            }
-
-            .launch-row>.primary {
-                flex: 1;
-            }
-
-            .instructions {
-                font-size: 10px;
-                gap: 8px 14px;
+            .control-buttons button {
+                min-width: 69px;
+                padding: 10px 13px;
             }
 
             #hud {
-                padding: 15px 14px;
+                padding-left: 14px;
+                padding-right: 14px;
             }
 
-            .hud-left {
-                gap: 12px;
-            }
-
-            #mapLabel {
-                font-size: 10px;
-            }
-
-            #score {
-                font-size: 30px;
-            }
-
-            #bottom {
-                left: 12px;
-                right: 12px;
-                gap: 8px;
-                bottom: 16px;
-            }
-
-            .energy-panel {
-                width: 118px;
-                padding: 10px;
-            }
-
-            .touch-controls {
-                gap: 5px;
-            }
-
-            .touch-controls button {
-                min-width: 48px;
-                height: 51px;
-                font-size: 9px;
-            }
-
-            .touch-controls button:last-child {
-                min-width: 57px;
-            }
-
-            .touch-controls small {
-                font-size: 7px;
-            }
-
-            .dialog {
-                padding: 26px 20px;
+            #hint {
+                font-size: 14px;
             }
         }
 
-        @media(prefers-reduced-motion: reduce) {
-
-            *,
-            *::before,
-            *::after {
-                transition: none !important;
+        @media (prefers-reduced-motion: reduce) {
+            .button {
+                transition: none;
             }
         }
     </style>
 </head>
 
 <body>
-    <canvas id="game" aria-label="Flipside flying game">
-        This game requires a browser with HTML canvas support.
-    </canvas>
+    <canvas id="world" aria-label="Patchwing flying game"></canvas>
 
-    <div id="menu" class="overlay">
-        <main class="shell">
-            <div class="brandline">
-                <div class="eyebrow"><span class="brand-icon">↗</span> An upside-down adventure</div>
-                <div>
-                    <button id="soundMenu" class="small">Sound: on</button>
-                    <button id="fxMenu" class="small">FX: full</button>
-                </div>
-            </div>
-            <h1>FLIP<span>//</span>SIDE</h1>
-            <p class="intro">
-                Seven skies. Two directions. One very brave bird.<br>
-                Bend gravity, thread glowing rings, and phase through the impossible.
+    <section id="menu" class="screen">
+        <div class="paper">
+            <div class="postmark">BRAMBLE<br>POST OFFICE<br>No. 01</div>
+            <div class="eyebrow">The small hours postal service</div>
+            <h1>Patchwing</h1>
+            <div class="subtitle">A rather important delivery.</div>
+
+            <p>
+                The orchard is awake, the kettle is on, and twelve
+                letters have escaped the morning post.
             </p>
-            <div class="section-label">
-                <span>01 / Choose your sky</span><span>All worlds unlocked</span>
+
+            <p class="note">
+                You are a small bird with a large responsibility.<br>
+                Please try not to become a hedge.
+            </p>
+
+            <hr class="rule">
+
+            <div class="eyebrow">First route</div>
+            <p style="margin: 5px 0">Bramble Post → The Orchard Office</p>
+
+            <div class="actions">
+                <button id="start" class="button primary">Off we go →</button>
+                <button id="menuSound" class="button">Sound: off</button>
             </div>
-            <div id="maps" class="maps"></div>
-            <div class="launch-row">
-                <button id="start" class="primary">Launch flight &nbsp; ↗</button>
-                <select id="mode" aria-label="Game mode">
-                    <option value="arcade">Arcade · one life</option>
-                    <option value="practice">Practice · no game over</option>
-                </select>
-                <div class="record">WORLD BEST <strong id="menuBest">0</strong></div>
+
+            <div class="smallprint">
+                SPACE / TAP — flap · F — turn gravity over<br>
+                P / ESC — pause · Best route score: <span id="best">0</span>
             </div>
-            <div class="instructions">
-                <span><kbd>Space</kbd> / tap to flap</span>
-                <span><kbd>F</kbd> flip gravity</span>
-                <span><kbd>D</kbd> phase dash</span>
-                <span>Match a ring’s arrow for 2× ring points</span>
-                <span>Rings recharge your dash</span>
-            </div>
-        </main>
-    </div>
+        </div>
+    </section>
 
     <div id="hud" hidden>
-        <div class="hud-left">
-            <div>
-                <div class="score-label">SCORE</div>
-                <div id="score">0</div>
-            </div>
-            <div>
-                <div id="mapLabel"></div>
-                <div id="runInfo">READY TO FLY</div>
-            </div>
+        <div class="ticket">
+            <div class="ticket-title">Morning post</div>
+            <div id="score">0 letters</div>
+            <div id="progress">ORCHARD GATES · 0 / 12</div>
         </div>
-        <div class="hud-right">
-            <button id="soundHud" class="hud-button" aria-label="Toggle sound">♪</button>
-            <button id="pause" class="hud-button" aria-label="Pause game">Ⅱ</button>
+        <div class="hud-actions">
+            <button id="sound" aria-label="Toggle sound">Sound off</button>
+            <button id="pause">Pause</button>
         </div>
     </div>
 
-    <div id="bottom" hidden>
-        <div class="energy-panel">
-            <div class="energy-top"><span>PHASE ENERGY</span><span id="energyText">100</span></div>
-            <div class="energy-track">
-                <div id="energyFill"></div>
-            </div>
-            <div id="gravityLabel">↓ GRAVITY · NORMAL</div>
-        </div>
-        <div class="touch-controls">
-            <button id="flipTouch">↕ FLIP<small>F</small></button>
-            <button id="dashTouch">» DASH<small>D / SHIFT</small></button>
-            <button id="flapTouch">FLAP ↗<small>SPACE / TAP</small></button>
-        </div>
-    </div>
-    <div id="toast" role="status"></div>
+    <div id="hint" role="status" hidden></div>
 
-    <div id="pauseScreen" class="overlay" hidden>
-        <section class="dialog">
-            <div class="eyebrow">Take a breath</div>
-            <h2>Sky on standby.</h2>
-            <p>The world can wait. Your next perfect run is still out there.</p>
-            <div class="dialog-actions">
-                <button id="resume" class="primary">Keep flying</button>
-                <button id="pauseHome" class="secondary">Worlds</button>
-            </div>
-        </section>
+    <div id="controls" hidden>
+        <div class="control-note" id="gravityNote">
+            A little flap.<br>A little courage.
+        </div>
+        <div class="control-buttons">
+            <button id="flip" class="button">
+                Turn over<small>F</small>
+            </button>
+            <button id="flap" class="button primary">
+                Flap<small>SPACE / TAP</small>
+            </button>
+        </div>
     </div>
 
-    <div id="over" class="overlay" hidden>
-        <section class="dialog">
-            <div id="resultLabel" class="eyebrow">A beautiful attempt</div>
-            <h2>One more flight?</h2>
-            <div id="finalScore">0</div>
-            <div class="stats">
-                <div class="stat"><strong id="finalGates">0</strong><span>Gates</span></div>
-                <div class="stat"><strong id="finalRings">0</strong><span>Rings</span></div>
-                <div class="stat"><strong id="finalCombo">0</strong><span>Best combo</span></div>
+    <section id="paused" class="screen" hidden>
+        <div class="paper">
+            <div class="eyebrow">A moment on the branch</div>
+            <h2>No hurry.</h2>
+            <p>The letters can wait while you catch your breath.</p>
+            <div class="actions">
+                <button id="resume" class="button primary">Carry on →</button>
+                <button id="pauseHome" class="button">Back to the desk</button>
             </div>
-            <p id="deathTip"></p>
-            <div class="dialog-actions">
-                <button id="retry" class="primary">Fly again ↗</button>
-                <button id="home" class="secondary">Worlds</button>
+        </div>
+    </section>
+
+    <section id="finished" class="screen" hidden>
+        <div class="paper">
+            <div class="eyebrow" id="resultEyebrow">Incident report</div>
+            <h2 id="resultTitle">A brief disagreement<br>with a tree.</h2>
+            <p id="resultText"></p>
+
+            <div class="results">
+                <div><strong id="lettersResult">0</strong><span>Letters rescued</span></div>
+                <div><strong id="pointsResult">0</strong><span>Route score</span></div>
+                <div><strong id="bestResult">0</strong><span>Best</span></div>
             </div>
-        </section>
-    </div>
+
+            <div class="actions">
+                <button id="retry" class="button primary">Another delivery →</button>
+                <button id="home" class="button">The desk</button>
+            </div>
+        </div>
+    </section>
 
     <script>
         (() => {
             "use strict";
 
             const $ = id => document.getElementById(id);
-            const canvas = $("game");
-            const ctx = canvas.getContext("2d");
+            const canvas = $("world");
+            const c = canvas.getContext("2d");
+
             const TAU = Math.PI * 2;
-            const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
-            const mix = (a, b, t) => a + (b - a) * t;
-            const mod = (n, m) => ((n % m) + m) % m;
-            const rand = (a, b) => a + Math.random() * (b - a);
-            const hash = n => {
-                const v = Math.sin(n * 127.1 + 311.7) * 43758.5453;
+            const clamp = (n, a, b) => Math.max(a, Math.min(b, n));
+            const lerp = (a, b, t) => a + (b - a) * t;
+            const mod = (a, b) => ((a % b) + b) % b;
+            const seed = n => {
+                const v = Math.sin(n * 127.1 + 43.7) * 43758.5453;
                 return v - Math.floor(v);
             };
 
-            const MAPS = [
-                {
-                    name: "Aurora Reach", desc: "Polar lights · balanced flight",
-                    sky: ["#07142d", "#163d57", "#538b94"],
-                    accent: "#9affdf", second: "#a78bfa", ground: "#102f48",
-                    gravity: 1, speed: 1, motion: 0, kind: "ice"
-                },
-                {
-                    name: "Sakura Reverie", desc: "Petal winds · drifting gates",
-                    sky: ["#382e65", "#ab688f", "#f2b5a2"],
-                    accent: "#ffc3dd", second: "#ffe5bb", ground: "#633c69",
-                    gravity: .95, speed: 1, motion: 22, kind: "wood"
-                },
-                {
-                    name: "Sunken Cathedral", desc: "Deep blue · soft buoyancy",
-                    sky: ["#03182a", "#06475c", "#117c88"],
-                    accent: "#79ffee", second: "#6bbcff", ground: "#073445",
-                    gravity: .76, speed: .94, motion: 29, kind: "ruin"
-                },
-                {
-                    name: "Amber Dunes", desc: "Golden sands · heavier gravity",
-                    sky: ["#482a54", "#c76765", "#ffd397"],
-                    accent: "#ffda8d", second: "#ff9a81", ground: "#804650",
-                    gravity: 1.12, speed: 1.02, motion: 0, kind: "sand"
-                },
-                {
-                    name: "Thunder Citadel", desc: "Storm towers · swaying gates",
-                    sky: ["#11172f", "#394268", "#8384a9"],
-                    accent: "#dae3ff", second: "#aab4ff", ground: "#292c4e",
-                    gravity: 1.03, speed: 1.04, motion: 34, kind: "storm"
-                },
-                {
-                    name: "Neon Afterglow", desc: "Electric skyline · fast flight",
-                    sky: ["#100c2b", "#35134c", "#8a356d"],
-                    accent: "#7dffed", second: "#ff72d5", ground: "#201331",
-                    gravity: 1, speed: 1.12, motion: 17, kind: "neon"
-                },
-                {
-                    name: "Astral Garden", desc: "Orbital dreams · low gravity",
-                    sky: ["#080d25", "#25184e", "#604876"],
-                    accent: "#c6adff", second: "#ffcfeb", ground: "#201934",
-                    gravity: .7, speed: .98, motion: 30, kind: "space"
-                }
+            const INK = "#484637";
+            const PAPER = "#f5ebd1";
+            const RED = "#af5844";
+            const reduced = matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+            let W = 1100, H = 720;
+            let state = "menu", priorState = "ready";
+            let time = 0, scroll = 0, elapsed = 0;
+            let bird = null, gates = [], feathers = [], notices = [];
+            let gateCount = 0, letters = 0, points = 0;
+            let deathClock = 0, flapBuffer = 0, flapCooldown = 0;
+            let flipCooldown = 0, hintClock = 0;
+            let accumulator = 0, lastTime = null;
+            let soundOn = false, audio = null;
+            let best = 0;
+
+            try { best = Math.max(0, Number(localStorage.getItem("patchwing-best")) || 0); }
+            catch (_) { }
+            $("best").textContent = best;
+
+            const STEP = 1 / 120;
+            const TOP = 42;
+            const BOTTOM = 625;
+
+            // Deliberately arranged route, not independently random gate heights.
+            const ROUTE = [
+                { y: 345, gap: 282, space: 1.12 },
+                { y: 330, gap: 270, space: 1.10 },
+                { y: 290, gap: 260, space: 1.12 },
+                { y: 350, gap: 250, space: 1.18 },
+                { y: 420, gap: 248, space: 1.14 },
+                { y: 365, gap: 265, space: 1.30 },
+                { y: 285, gap: 246, space: 1.14 },
+                { y: 240, gap: 240, space: 1.14 },
+                { y: 315, gap: 252, space: 1.22 },
+                { y: 405, gap: 244, space: 1.18 },
+                { y: 355, gap: 260, space: 1.18 },
+                { y: 330, gap: 292, space: 1.24 }
             ];
 
-            let saved = {};
-            try { saved = JSON.parse(localStorage.getItem("flipside-seven-v1") || "{}") || {}; }
-            catch (_) { }
-            const bests = Array.from({ length: 7 }, (_, i) =>
-                Math.max(0, Number(saved.bests?.[i]) || 0)
-            );
-            let selected = clamp(Number(saved.selected) || 0, 0, 6) | 0;
-            let muted = saved.muted === true;
-            let reduced = typeof saved.reduced === "boolean"
-                ? saved.reduced : matchMedia("(prefers-reduced-motion: reduce)").matches;
+            function playerX() { return clamp(W * .25, 84, 265); }
+            function paceScale() { return clamp(W / 1000, .57, 1); }
 
-            function save() {
-                try {
-                    localStorage.setItem("flipside-seven-v1",
-                        JSON.stringify({ bests, selected, muted, reduced }));
-                } catch (_) { }
+            // A small repeating paper sheet, generated once.
+            const texture = document.createElement("canvas");
+            texture.width = texture.height = 240;
+            const tc = texture.getContext("2d");
+
+            for (let i = 0; i < 2400; i++) {
+                const x = seed(i + 1) * 240;
+                const y = seed(i + 5000) * 240;
+                tc.fillStyle = i % 3 ? "#58492b09" : "#fffdf526";
+                tc.fillRect(x, y, 1 + seed(i + 22) * 2, .6);
             }
-
-            let W = 1280, H = 720, dpr = 1;
-            let state = "menu", practice = false;
-            let bird, gates = [], particles = [], labels = [], trail = [];
-            let score = 0, cleared = 0, rings = 0, combo = 0, maxCombo = 0;
-            let elapsed = 0, distance = 0, serial = 0, lastCenter = 360;
-            let flipCooldown = 0, dashCooldown = 0, invulnerable = 0;
-            let shake = 0, flash = 0, toastTime = 0, wing = 0;
-            let visualTime = 0, trailClock = 0;
-            let frameLast = 0, accumulator = 0;
-            const STEP = 1 / 120;
+            const paperPattern = c.createPattern(texture, "repeat");
 
             function resize() {
-                const previousW = W;
-                H = 720;
-                W = H * innerWidth / Math.max(1, innerHeight);
-                dpr = Math.min(devicePixelRatio || 1, 2);
-                canvas.width = Math.round(innerWidth * dpr);
-                canvas.height = Math.round(innerHeight * dpr);
+                const oldX = bird?.x ?? 0;
+                W = H * innerWidth / Math.max(innerHeight, 1);
+                const ratio = Math.min(devicePixelRatio || 1, 2);
+
+                canvas.width = Math.round(innerWidth * ratio);
+                canvas.height = Math.round(innerHeight * ratio);
+
                 if (bird) {
-                    const oldX = bird.x;
                     bird.x = playerX();
-                    const dx = bird.x - oldX;
-                    gates.forEach(g => g.x += dx);
-                    trail = [];
+                    const shift = bird.x - oldX;
+                    gates.forEach(g => g.x += shift);
                 }
-                if (previousW !== W && state === "playing") pauseGame();
+
+                if (state === "playing" || state === "ready") pause();
             }
-            function playerX() { return clamp(W * .24, 74, 245); }
-            function speedScale() { return clamp(W / 1050, .61, 1); }
-            function ceiling() { return 54; }
-            function floor() { return H - 64; }
+
             addEventListener("resize", resize);
 
-            // Audio is synthesized locally and starts only after user interaction.
-            let audio = null, master = null;
-            function unlockAudio() {
-                if (muted) return;
+            function path(draw, fill, stroke = INK, width = 1.5) {
+                c.beginPath();
+                draw(c);
+                if (fill) { c.fillStyle = fill; c.fill(); }
+                if (stroke) {
+                    c.strokeStyle = stroke;
+                    c.lineWidth = width;
+                    c.lineJoin = "round";
+                    c.lineCap = "round";
+                    c.stroke();
+                }
+            }
+
+            function oval(x, y, rx, ry, fill, stroke = null, rotation = 0) {
+                path(p => p.ellipse(x, y, rx, ry, rotation, 0, TAU), fill, stroke);
+            }
+
+            function line(x1, y1, x2, y2, color = INK, width = 1.5) {
+                path(p => {
+                    p.moveTo(x1, y1);
+                    p.lineTo(x2, y2);
+                }, null, color, width);
+            }
+
+            function text(value, x, y, size = 15, color = INK, align = "center") {
+                c.fillStyle = color;
+                c.font = `${size}px Georgia`;
+                c.textAlign = align;
+                c.fillText(value, x, y);
+            }
+
+            function initAudio() {
+                if (!soundOn) return;
                 try {
-                    if (!audio) {
-                        const Audio = window.AudioContext || window.webkitAudioContext;
-                        if (!Audio) return;
-                        audio = new Audio();
-                        master = audio.createGain();
-                        master.gain.value = .20;
-                        master.connect(audio.destination);
-                    }
+                    const Audio = window.AudioContext || window.webkitAudioContext;
+                    if (!Audio) return;
+                    if (!audio) audio = new Audio();
                     if (audio.state === "suspended") audio.resume().catch(() => { });
                 } catch (_) { }
             }
-            function tone(frequency, duration = .12, type = "sine", volume = .3, end = frequency) {
-                if (muted || !audio || audio.state !== "running") return;
-                try {
-                    const now = audio.currentTime;
-                    const o = audio.createOscillator(), g = audio.createGain();
-                    o.type = type;
-                    o.frequency.setValueAtTime(frequency, now);
-                    o.frequency.exponentialRampToValueAtTime(Math.max(20, end), now + duration);
-                    g.gain.setValueAtTime(.0001, now);
-                    g.gain.exponentialRampToValueAtTime(Math.max(.001, volume), now + .008);
-                    g.gain.exponentialRampToValueAtTime(.0001, now + duration);
-                    o.connect(g); g.connect(master);
-                    o.start(now); o.stop(now + duration + .025);
-                    o.onended = () => { o.disconnect(); g.disconnect(); };
-                } catch (_) { }
-            }
-            function sound(type) {
-                if (type === "flap") tone(390, .09, "sine", .17, 680);
-                if (type === "flip") {
-                    tone(220, .23, "triangle", .22, 740);
-                    tone(440, .18, "sine", .12, 1100);
-                }
-                if (type === "dash") tone(130, .35, "sawtooth", .09, 620);
-                if (type === "ring") {
-                    const f = 520 + combo * 95;
-                    tone(f, .19, "sine", .25);
-                    tone(f * 1.5, .28, "sine", .13);
-                }
-                if (type === "pass") tone(500, .08, "triangle", .10, 650);
-                if (type === "hit") tone(160, .33, "triangle", .45, 35);
+
+            function note(freq, length = .1, volume = .045, end = freq) {
+                if (!soundOn || !audio || audio.state !== "running") return;
+                const now = audio.currentTime;
+                const o = audio.createOscillator();
+                const g = audio.createGain();
+                o.type = "sine";
+                o.frequency.setValueAtTime(freq, now);
+                o.frequency.exponentialRampToValueAtTime(Math.max(end, 20), now + length);
+                g.gain.setValueAtTime(.0001, now);
+                g.gain.exponentialRampToValueAtTime(volume, now + .012);
+                g.gain.exponentialRampToValueAtTime(.0001, now + length);
+                o.connect(g);
+                g.connect(audio.destination);
+                o.start();
+                o.stop(now + length + .02);
+                o.onended = () => { o.disconnect(); g.disconnect(); };
             }
 
-            function roundRect(c, x, y, w, h, r = 10) {
-                if (w <= 0 || h <= 0) return;
-                r = Math.min(r, w / 2, h / 2);
-                c.beginPath();
-                c.moveTo(x + r, y);
-                c.arcTo(x + w, y, x + w, y + h, r);
-                c.arcTo(x + w, y + h, x, y + h, r);
-                c.arcTo(x, y + h, x, y, r);
-                c.arcTo(x, y, x + w, y, r);
-                c.closePath();
-            }
-            function ellipse(c, x, y, rx, ry, color, angle = 0) {
-                c.fillStyle = color;
-                c.beginPath();
-                c.ellipse(x, y, Math.max(.01, rx), Math.max(.01, ry), angle, 0, TAU);
-                c.fill();
-            }
-            function glow(c, x, y, radius, color) {
-                const g = c.createRadialGradient(x, y, 0, x, y, radius);
-                g.addColorStop(0, color);
-                g.addColorStop(1, "transparent");
-                c.fillStyle = g;
-                c.fillRect(x - radius, y - radius, radius * 2, radius * 2);
+            function toggleSound() {
+                soundOn = !soundOn;
+                initAudio();
+                $("menuSound").textContent = "Sound: " + (soundOn ? "on" : "off");
+                $("sound").textContent = "Sound " + (soundOn ? "on" : "off");
             }
 
-            // Every world has its own scenery, not merely a palette swap.
-            function background(c, w, h, index, time, travel) {
-                const m = MAPS[index];
-                const s = h / 720;
-                c.save();
-                c.scale(s, s);
-                const vw = w / s, vh = 720;
-                const g = c.createLinearGradient(0, 0, 0, vh);
-                g.addColorStop(0, m.sky[0]); g.addColorStop(.6, m.sky[1]);
-                g.addColorStop(1, m.sky[2]);
-                c.fillStyle = g; c.fillRect(0, 0, vw, vh);
-
-                if ([0, 5, 6].includes(index)) {
-                    for (let i = 0; i < 85; i++) {
-                        const x = mod(hash(i + 1) * (vw + 60) - travel * .025, vw + 60) - 30;
-                        const y = hash(i + 200) * 530;
-                        const a = .22 + .5 * (Math.sin(time * .7 + i * 2) * .5 + .5);
-                        c.globalAlpha = a;
-                        ellipse(c, x, y, hash(i + 400) * 1.5 + .5, hash(i + 400) * 1.5 + .5, "#fff");
-                    }
-                    c.globalAlpha = 1;
-                }
-
-                if (index === 0) {
-                    glow(c, vw * .72, 145, 185, "#a2fff21d");
-                    ellipse(c, vw * .72, 145, 36, 36, "#dbfff0");
-                    for (let band = 0; band < 3; band++) {
-                        c.beginPath();
-                        for (let x = -20; x <= vw + 30; x += 16) {
-                            const y = 115 + band * 38 +
-                                Math.sin(x * .004 + time * .13 + band) * 58 +
-                                Math.sin(x * .009 + band * 2) * 21;
-                            if (x === -20) c.moveTo(x, y); else c.lineTo(x, y);
-                        }
-                        for (let x = vw + 30; x >= -20; x -= 16) {
-                            const y = 188 + band * 38 +
-                                Math.sin(x * .004 + time * .13 + band) * 58;
-                            c.lineTo(x, y);
-                        }
-                        c.closePath();
-                        const ag = c.createLinearGradient(0, 60, 0, 340);
-                        ag.addColorStop(0, "#83ffc800");
-                        ag.addColorStop(.45, band === 1 ? "#ae8dff35" : "#7dffd837");
-                        ag.addColorStop(1, "#83ffc800");
-                        c.fillStyle = ag; c.fill();
-                    }
-                }
-
-                if (index === 1 || index === 3) {
-                    const sx = vw * .73, sy = index === 1 ? 188 : 244;
-                    glow(c, sx, sy, 170, index === 1 ? "#ffd5ca33" : "#ffce9944");
-                    ellipse(c, sx, sy, index === 1 ? 57 : 78,
-                        index === 1 ? 57 : 78, index === 1 ? "#ffd4cd" : "#ffd39b");
-                    if (index === 3) {
-                        c.fillStyle = "#bc687322";
-                        for (let i = 0; i < 5; i++) c.fillRect(sx - 85, sy + i * 14, 170, 5);
-                    }
-                }
-
-                if (index === 2) {
-                    for (let i = 0; i < 6; i++) {
-                        c.beginPath();
-                        const x = vw * (i / 5) + Math.sin(time * .12 + i) * 45;
-                        c.moveTo(x, 0); c.lineTo(x + 150, 0);
-                        c.lineTo(x - 10, 720); c.lineTo(x - 160, 720);
-                        c.closePath(); c.fillStyle = "#a4ffe807"; c.fill();
-                    }
-                    for (let i = 0; i < 7; i++) {
-                        const x = mod(i * 193 - travel * .13, vw + 220) - 90;
-                        const y = 340 + hash(i + 9) * 145;
-                        c.fillStyle = "#12394b";
-                        c.fillRect(x, y, 30, 720 - y);
-                        c.fillRect(x - 10, y - 12, 50, 17);
-                        c.fillRect(x - 6, y + 44, 42, 12);
-                    }
-                }
-
-                if (index === 4) {
-                    for (let i = 0; i < 13; i++) {
-                        const x = mod(i * 167 - travel * .12, vw + 260) - 130;
-                        const y = 160 + hash(i + 30) * 150;
-                        ellipse(c, x, y, 155, 40, "#2a314b60");
-                        ellipse(c, x + 50, y - 20, 77, 48, "#30365266");
-                    }
-                    // A dim distant bolt: decorative, never an invisible hazard.
-                    if (!reduced && Math.sin(time * .7) > .995) {
-                        c.strokeStyle = "#e3e5ff75"; c.lineWidth = 2;
-                        c.beginPath(); c.moveTo(vw * .7, 125);
-                        c.lineTo(vw * .67, 207); c.lineTo(vw * .71, 190);
-                        c.lineTo(vw * .65, 296); c.stroke();
-                    }
-                }
-
-                if (index === 6) {
-                    glow(c, vw * .7, 210, 255, "#b896ff24");
-                    c.save();
-                    c.translate(vw * .7, 210); c.rotate(-.38);
-                    c.strokeStyle = "#f5caff66"; c.lineWidth = 9;
-                    c.beginPath(); c.ellipse(0, 0, 130, 33, 0, 0, TAU); c.stroke();
-                    const pg = c.createLinearGradient(-65, -65, 65, 65);
-                    pg.addColorStop(0, "#e3c3ee"); pg.addColorStop(.5, "#9a7bc5");
-                    pg.addColorStop(1, "#473e78");
-                    ellipse(c, 0, 0, 69, 69, pg);
-                    c.strokeStyle = "#ffe0f9aa"; c.lineWidth = 5;
-                    c.beginPath(); c.ellipse(0, 0, 130, 33, 0, 0, Math.PI); c.stroke();
-                    c.restore();
-                    for (let i = 0; i < 7; i++) {
-                        const x = mod(i * 211 - travel * .17, vw + 220) - 110;
-                        const y = 470 + hash(i + 8) * 135 + Math.sin(time * .5 + i) * 9;
-                        c.fillStyle = "#29233e";
-                        c.beginPath(); c.moveTo(x - 55, y); c.lineTo(x + 60, y);
-                        c.lineTo(x + 10, y + 53); c.closePath(); c.fill();
-                        ellipse(c, x, y, 57, 10, "#75618c");
-                        c.fillStyle = "#c9afff";
-                        c.beginPath(); c.moveTo(x, y - 38); c.lineTo(x + 10, y - 9);
-                        c.lineTo(x, y); c.lineTo(x - 9, y - 9); c.closePath(); c.fill();
-                    }
-                }
-
-                // Layered dunes or alpine silhouettes.
-                if (index !== 5 && index !== 6) {
-                    for (let layer = 0; layer < 3; layer++) {
-                        const base = 455 + layer * 79;
-                        c.beginPath(); c.moveTo(-10, vh);
-                        for (let x = -10; x <= vw + 25; x += 15) {
-                            const pos = x + travel * (.07 + layer * .055);
-                            let y;
-                            if (index === 3) {
-                                y = base + Math.sin(pos * .0036 + layer * 2) * 66 +
-                                    Math.sin(pos * .007 + layer) * 18;
-                            } else {
-                                y = base - Math.abs(Math.sin(pos * .003 + layer * 1.8)) * 120 -
-                                    Math.abs(Math.sin(pos * .008 + layer)) * 40;
-                            }
-                            c.lineTo(x, y);
-                        }
-                        c.lineTo(vw + 25, vh); c.closePath();
-                        c.fillStyle = m.ground;
-                        c.globalAlpha = .27 + layer * .23; c.fill();
-                    }
-                    c.globalAlpha = 1;
-                }
-
-                if (index === 1) {
-                    for (let i = 0; i < 7; i++) {
-                        const x = mod(i * 213 - travel * .24, vw + 260) - 130;
-                        const y = 510 + hash(i + 30) * 130;
-                        c.strokeStyle = "#543651"; c.lineWidth = 9;
-                        c.beginPath(); c.moveTo(x, 735); c.lineTo(x - 8, y - 30);
-                        c.moveTo(x - 5, y + 30); c.lineTo(x - 48, y - 10);
-                        c.moveTo(x - 7, y + 5); c.lineTo(x + 43, y - 37); c.stroke();
-                        for (let j = 0; j < 6; j++) {
-                            ellipse(c, x + (hash(j + i * 9) - .5) * 130,
-                                y - 30 + (hash(j + i * 10 + 20) - .5) * 55,
-                                35 + hash(j + 2) * 18, 25, j % 2 ? "#c880a6" : "#df9cb8");
-                        }
-                    }
-                }
-
-                if (index === 5) {
-                    for (let layer = 0; layer < 3; layer++) {
-                        const spacing = 88 + layer * 16;
-                        const shift = travel * (.08 + layer * .12);
-                        const count = Math.ceil(vw / spacing) + 3;
-                        for (let i = -1; i < count; i++) {
-                            const n = i + Math.floor(shift / spacing);
-                            const x = i * spacing - mod(shift, spacing);
-                            const bh = 90 + hash(n + layer * 100) * (220 + layer * 25);
-                            const y = 720 - bh;
-                            c.fillStyle = ["#342346", "#241a36", "#17132b"][layer];
-                            c.fillRect(x, y, spacing - 12, bh);
-                            c.fillStyle = layer === 2 ? "#ff72d570" : "#86e8ec40";
-                            c.fillRect(x + 5, y + 4, spacing - 22, 2);
-                            for (let row = 0; row < bh / 22 - 1; row++) {
-                                for (let col = 0; col < 3; col++) {
-                                    if (hash(n * 43 + row * 7 + col + layer) > .44) {
-                                        c.fillStyle = (row + col) % 3 ? "#ff93d736" : "#8effed66";
-                                        c.fillRect(x + 12 + col * 20, y + 17 + row * 22, 7, 9);
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-
-                // Atmospheric particles, deterministic so backgrounds never flicker.
-                const count = reduced ? 15 : 40;
-                for (let i = 0; i < count; i++) {
-                    const drift = index === 2 ? -time * 17 : time * (8 + hash(i) * 10);
-                    const x = mod(hash(i + 700) * (vw + 60) - travel * .32 +
-                        Math.sin(time * .3 + i) * 13, vw + 60) - 30;
-                    const y = mod(hash(i + 900) * 780 + drift, 780) - 30;
-                    c.globalAlpha = .18 + hash(i + 88) * .4;
-                    if (index === 1) {
-                        ellipse(c, x, y, 5, 2.4, "#ffd5e7", time * .5 + i);
-                    } else if (index === 2) {
-                        c.strokeStyle = "#a1ffed"; c.lineWidth = 1;
-                        c.beginPath(); c.arc(x, y, 2 + hash(i + 1) * 4, 0, TAU); c.stroke();
-                    } else if (index === 4) {
-                        c.strokeStyle = "#c9d4ef"; c.lineWidth = 1;
-                        c.beginPath(); c.moveTo(x, y); c.lineTo(x - 9, y + 22); c.stroke();
-                    } else {
-                        ellipse(c, x, y, 1.5, 1.5, m.accent);
-                    }
-                }
-                c.globalAlpha = 1;
-                c.restore();
+            function hint(message, duration = 3) {
+                $("hint").textContent = message;
+                $("hint").hidden = false;
+                hintClock = duration;
             }
 
-            function buildMapMenu() {
-                $("maps").textContent = "";
-                MAPS.forEach((m, i) => {
-                    const button = document.createElement("button");
-                    button.className = "map" + (i === selected ? " selected" : "");
-                    button.setAttribute("aria-pressed", String(i === selected));
-                    button.innerHTML =
-                        `<canvas width="480" height="180" aria-hidden="true"></canvas>
-         <span class="map-num">0${i + 1}</span>
-         <div class="map-info"><div class="map-name">${m.name}</div>
-         <div class="map-desc">${m.desc}</div></div>`;
-                    background(button.querySelector("canvas").getContext("2d"),
-                        480, 180, i, 4, 100);
-                    button.addEventListener("click", () => {
-                        selected = i;
-                        [...$("maps").children].forEach((el, j) => {
-                            el.classList.toggle("selected", j === i);
-                            el.setAttribute("aria-pressed", String(j === i));
-                        });
-                        $("menuBest").textContent = bests[selected];
-                        document.documentElement.style.setProperty("--accent", m.accent);
-                        save();
-                    });
-                    $("maps").appendChild(button);
-                });
-                $("menuBest").textContent = bests[selected];
-                document.documentElement.style.setProperty("--accent", MAPS[selected].accent);
-            }
-
-            function showToast(text, duration = 2.2) {
-                $("toast").textContent = text; toastTime = duration;
-                $("toast").style.opacity = 1;
-            }
-
-            function burst(x, y, color, count = 16, force = 150) {
-                if (reduced) count = Math.ceil(count / 3);
-                for (let i = 0; i < count; i++) {
-                    const a = rand(0, TAU), v = rand(force * .2, force);
-                    const life = rand(.3, .8);
-                    particles.push({
-                        x, y, vx: Math.cos(a) * v, vy: Math.sin(a) * v,
-                        life, maxLife: life, r: rand(1.5, 4), color
-                    });
-                }
-                if (particles.length > 280) particles.splice(0, particles.length - 280);
-            }
-            function floatText(text, x, y, color = "#ffffff") {
-                labels.push({ text, x, y, color, life: 1.1 });
-            }
-
-            function spawnGate(x) {
-                const m = MAPS[selected];
-                const difficulty = Math.min(cleared, 55);
-                const gap = (practice ? 244 : 222) - difficulty * .52;
-                const amp = m.motion * Math.min(1, .45 + serial * .12);
-                const low = ceiling() + gap / 2 + amp + 35;
-                const high = floor() - gap / 2 - amp - 35;
-                const center = clamp(lastCenter + rand(-105, 105), low, high);
-                lastCenter = center;
-                gates.push({
-                    x, w: 67 * clamp(W / 1000, .78, 1),
-                    base: center, cy: center, gap, amp,
-                    seed: rand(0, TAU), age: 0,
-                    passed: false, collected: false, missed: false,
-                    polarity: Math.floor(serial / 2) % 2 === 0 ? 1 : -1,
-                    id: serial++
-                });
-            }
-
-            function startGame() {
-                unlockAudio();
-                practice = $("mode").value === "practice";
+            function start() {
+                initAudio();
                 state = "ready";
-                score = cleared = rings = combo = maxCombo = 0;
-                elapsed = distance = serial = 0; lastCenter = H / 2;
-                gates = []; particles = []; labels = []; trail = [];
-                flipCooldown = dashCooldown = shake = flash = 0;
-                invulnerable = 0; wing = 0; trailClock = 0;
+                scroll = elapsed = gateCount = letters = points = 0;
+                flapBuffer = flapCooldown = flipCooldown = deathClock = 0;
+                feathers = [];
+                notices = [];
+
                 bird = {
-                    x: playerX(), y: H / 2, vy: 0, radius: 13,
-                    gravity: 1, energy: 100, dash: 0, rotation: 0
+                    x: playerX(), y: 340, vy: 0, gravity: 1,
+                    angle: 0, targetRoll: 0, roll: 0, flap: 0,
+                    bagAngle: .1, bagVelocity: 0, tail: 0
                 };
-                spawnGate(W + 100);
-                $("menu").hidden = true; $("over").hidden = true;
-                $("pauseScreen").hidden = true;
-                $("hud").hidden = false; $("bottom").hidden = false;
-                $("mapLabel").textContent = MAPS[selected].name;
-                showToast("SPACE / TAP TO LAUNCH · F TO FLIP · D TO DASH", 30);
-                accumulator = 0;
+
+                let x = W + 100;
+                gates = ROUTE.map((item, i) => {
+                    const gate = { ...item, x, index: i, collected: false, passed: false };
+                    x += 325 * paceScale() * item.space;
+                    return gate;
+                });
+
+                $("menu").hidden = true;
+                $("paused").hidden = true;
+                $("finished").hidden = true;
+                $("hud").hidden = false;
+                $("controls").hidden = false;
+
+                hint("Tap or press Space. The morning post is waiting.", 999);
                 updateHUD();
-                if (document.activeElement instanceof HTMLElement) document.activeElement.blur();
+                accumulator = 0;
+                document.activeElement?.blur();
             }
 
-            function flap() {
-                unlockAudio();
+            function queueFlap() {
+                initAudio();
                 if (state === "ready") {
                     state = "playing";
-                    showToast("Collect rings. Match their arrows for 2× points.", 3.5);
+                    hint("Small taps. Leave a little room above your head.", 4);
                 }
-                if (state !== "playing") return;
-                const m = MAPS[selected];
-                bird.vy = -bird.gravity * 328 * Math.sqrt(m.gravity);
-                wing = 1; sound("flap");
-                burst(bird.x - 12, bird.y + 6 * bird.gravity, m.accent, 5, 65);
+                if (state === "playing") flapBuffer = .12;
             }
 
             function flip() {
                 if (state !== "playing" || flipCooldown > 0) return;
                 bird.gravity *= -1;
-                bird.vy = bird.gravity * Math.max(110, Math.abs(bird.vy) * .52);
-                flipCooldown = .28; wing = 1;
-                sound("flip");
-                burst(bird.x, bird.y, bird.gravity < 0 ? "#bba4ff" : "#ffe1a4", 20, 160);
-                floatText(bird.gravity < 0 ? "GRAVITY ↑" : "GRAVITY ↓",
-                    bird.x + 50, bird.y - 35, MAPS[selected].accent);
+                bird.vy *= .48;
+                bird.targetRoll += Math.PI;
+                bird.bagVelocity += bird.gravity * 4;
+                flipCooldown = .42;
+                note(330, .18, .035, 490);
+                hint(
+                    bird.gravity < 0
+                        ? "Upside down. Your flap now pushes you downward."
+                        : "Right way up. Mostly.",
+                    2.2
+                );
             }
 
-            function dash() {
-                if (state !== "playing") return;
-                if (bird.energy < 40 || dashCooldown > 0) {
-                    showToast(bird.energy < 40 ? "Need 40 energy · collect rings!" : "Dash recharging", 1);
-                    return;
-                }
-                bird.energy -= 40;
-                bird.dash = .65; dashCooldown = 1.05;
-                sound("dash"); burst(bird.x, bird.y, "#a8ffff", 22, 220);
-                if (!reduced) shake = 3;
-                showToast("PHASE ACTIVE · gates cannot hurt you", .8);
-            }
-
-            function pauseGame() {
-                if (state !== "playing" && state !== "ready") return;
-                $("pauseScreen").dataset.previous = state;
+            function pause() {
+                if (!["ready", "playing"].includes(state)) return;
+                priorState = state;
                 state = "paused";
-                $("pauseScreen").hidden = false;
+                $("paused").hidden = false;
             }
-            function resumeGame() {
+
+            function resume() {
                 if (state !== "paused") return;
-                unlockAudio();
-                state = $("pauseScreen").dataset.previous || "playing";
-                $("pauseScreen").hidden = true; accumulator = 0;
-                if (document.activeElement instanceof HTMLElement) document.activeElement.blur();
+                state = priorState;
+                $("paused").hidden = true;
+                accumulator = 0;
+                initAudio();
+                document.activeElement?.blur();
             }
+
             function home() {
                 state = "menu";
                 $("menu").hidden = false;
-                $("over").hidden = $("pauseScreen").hidden = true;
-                $("hud").hidden = $("bottom").hidden = true;
-                $("toast").style.opacity = 0; toastTime = 0;
-                $("menuBest").textContent = bests[selected];
-                gates = []; particles = []; trail = []; labels = [];
+                ["finished", "paused", "hud", "controls", "hint"].forEach(id => {
+                    $(id).hidden = true;
+                });
+                $("best").textContent = best;
+                gates = [];
+                feathers = [];
+                notices = [];
+                bird = null;
             }
 
-            function hit(reason, gate = null) {
-                if (invulnerable > 0) return;
-                if (practice) {
-                    bird.y = gate ? gate.cy : H / 2;
-                    bird.vy = 0; bird.energy = Math.max(60, bird.energy);
-                    invulnerable = 1.5; combo = 0;
-                    burst(bird.x, bird.y, MAPS[selected].accent, 20, 180);
-                    showToast("Practice rescue · keep exploring", 1.7);
-                    return;
+            function finish(won) {
+                state = won ? "won" : "over";
+
+                if (won) points += 100;
+                if (points > best) {
+                    best = points;
+                    try { localStorage.setItem("patchwing-best", String(best)); }
+                    catch (_) { }
                 }
-                state = "dying";
-                bird.dash = 0;
-                if (!reduced) { shake = 11; flash = .18; }
-                sound("hit");
-                burst(bird.x, bird.y, "#ffe5bc", 48, 280);
-                const newBest = score > bests[selected];
-                if (newBest) { bests[selected] = score; save(); }
-                $("resultLabel").textContent = newBest ? "✦ New world record" : "A beautiful attempt";
-                $("finalScore").textContent = score.toLocaleString();
-                $("finalGates").textContent = cleared;
-                $("finalRings").textContent = rings;
-                $("finalCombo").textContent = "×" + maxCombo;
-                $("deathTip").textContent = reason === "edge"
-                    ? "The sky’s edges are solid—even during a phase dash. Flip gravity before you get trapped."
-                    : "A phase dash lets you pass through gates. Save 40 energy for a tight escape.";
-                setTimeout(() => {
-                    if (state === "dying") {
-                        state = "over";
-                        $("over").hidden = false;
-                        $("bottom").hidden = true;
-                    }
-                }, 650);
+
+                $("finished").hidden = false;
+                $("controls").hidden = true;
+                $("hint").hidden = true;
+                $("resultEyebrow").textContent = won ? "Stamped & safely delivered" : "Incident report";
+                $("resultTitle").innerHTML = won
+                    ? "The kettle’s<br>still warm."
+                    : "A brief disagreement<br>with a tree.";
+
+                $("resultText").textContent = won
+                    ? `You reached the Orchard Office with ${letters} of 12 letters.
+         ${letters === 12 ? "Not a single birthday forgotten." : "There may be a few still hiding in the hedges."}`
+                    : "No birds were harmed. Your dignity may need a little stitching. Try a gentler rhythm, or turn gravity over before you run out of room.";
+
+                $("lettersResult").textContent = letters + "/12";
+                $("pointsResult").textContent = points;
+                $("bestResult").textContent = best;
+                updateHUD();
+
+                if (won) {
+                    note(523, .3, .05);
+                    note(659, .42, .025);
+                }
             }
 
-            function circleRect(cx, cy, r, x, y, w, h) {
-                if (h <= 0) return false;
-                const dx = cx - clamp(cx, x, x + w);
-                const dy = cy - clamp(cy, y, y + h);
-                return dx * dx + dy * dy < r * r;
-            }
-
-            function updateGame(dt) {
+            function crash() {
                 if (state !== "playing") return;
-                const m = MAPS[selected];
-                elapsed += dt;
-                flipCooldown = Math.max(0, flipCooldown - dt);
-                dashCooldown = Math.max(0, dashCooldown - dt);
-                invulnerable = Math.max(0, invulnerable - dt);
-                bird.dash = Math.max(0, bird.dash - dt);
-                bird.energy = Math.min(100, bird.energy + dt * 4.5);
-                const phasing = bird.dash > 0;
-                const speed = (236 + Math.min(cleared * 2.1, 105)) *
-                    m.speed * speedScale() * (phasing ? 1.85 : 1);
+                state = "falling";
+                deathClock = 0;
+                bird.vy = -180;
+                note(150, .2, .05, 75);
 
-                bird.vy += 970 * m.gravity * bird.gravity * dt * (phasing ? .35 : 1);
-                bird.vy *= Math.exp(-.11 * dt);
-                bird.vy = clamp(bird.vy, -540, 540);
-                bird.y += bird.vy * dt;
-                bird.rotation = mix(bird.rotation, clamp(bird.vy / 650, -.55, .85), 1 - Math.exp(-11 * dt));
-                wing = Math.max(0, wing - dt * 5);
-                distance += speed * dt;
-
-                if (bird.y - bird.radius < ceiling() || bird.y + bird.radius > floor()) {
-                    hit("edge");
-                    if (state !== "playing") return;
-                }
-
-                const spacing = (315 + Math.min(cleared * .6, 30)) * speedScale();
-                for (const gate of gates) {
-                    gate.x -= speed * dt;
-                    gate.age += dt;
-                    gate.cy = gate.base + Math.sin(gate.age * 1.2 + gate.seed) * gate.amp;
-                }
-                while (!gates.length || gates[gates.length - 1].x < W + 100) {
-                    spawnGate(gates.length ? gates[gates.length - 1].x + spacing : W + 100);
-                }
-
-                for (const gate of gates) {
-                    const top = gate.cy - gate.gap / 2;
-                    const bottom = gate.cy + gate.gap / 2;
-                    const ringX = gate.x + gate.w / 2;
-
-                    if (!phasing && invulnerable <= 0 &&
-                        (circleRect(bird.x, bird.y, bird.radius, gate.x, 0, gate.w, top) ||
-                            circleRect(bird.x, bird.y, bird.radius, gate.x, bottom, gate.w, H - bottom))) {
-                        hit("gate", gate);
-                        if (state !== "playing") return;
-                    }
-
-                    if (!gate.collected && !gate.missed &&
-                        Math.hypot(bird.x - ringX, bird.y - gate.cy) < 32) {
-                        gate.collected = true; rings++;
-                        combo = Math.min(combo + 1, 5); maxCombo = Math.max(maxCombo, combo);
-                        const match = bird.gravity === gate.polarity;
-                        const points = 25 * combo * (match ? 2 : 1);
-                        score += points;
-                        bird.energy = Math.min(100, bird.energy + (match ? 22 : 14));
-                        sound("ring");
-                        burst(ringX, gate.cy, match ? "#ffdf99" : m.accent, 19, 180);
-                        floatText((match ? "PERFECT " : "") + "+" + points,
-                            ringX, gate.cy - 35, match ? "#ffe2a4" : "#ffffff");
-                    }
-                    if (!gate.collected && !gate.missed && ringX < bird.x - 35) {
-                        gate.missed = true; combo = 0;
-                    }
-
-                    if (!gate.passed && gate.x + gate.w < bird.x - bird.radius) {
-                        gate.passed = true; cleared++; score += 10; sound("pass");
-                        const clearance = Math.min(
-                            bird.y - bird.radius - top,
-                            bottom - bird.y - bird.radius
-                        );
-                        if (!phasing && invulnerable <= 0 && clearance >= 0 && clearance < 19) {
-                            score += 15;
-                            floatText("CLOSE CALL +15", bird.x + 30, bird.y - 48, "#ffdca2");
-                            burst(bird.x, bird.y, "#ffdca2", 10, 110);
-                        }
-                        if (cleared % 10 === 0) {
-                            showToast(`${cleared} GATES · ${combo > 1 ? "COMBO ×" + combo : "KEEP FLYING"}`);
-                        }
-                    }
-                }
-                gates = gates.filter(g => g.x + g.w > -70);
-
-                trailClock += dt;
-                if (trailClock > (reduced ? .055 : .022)) {
-                    trailClock = 0;
-                    trail.push({
-                        x: bird.x - 15, y: bird.y, life: phasing ? .6 : .35,
-                        maxLife: phasing ? .6 : .35, phase: phasing
+                const count = reduced ? 5 : 15;
+                for (let i = 0; i < count; i++) {
+                    feathers.push({
+                        x: bird.x, y: bird.y,
+                        vx: (seed(i + 100) - .5) * 230,
+                        vy: -80 - seed(i + 200) * 180,
+                        angle: seed(i + 300) * TAU,
+                        turn: (seed(i + 400) - .5) * 5,
+                        life: 2
                     });
                 }
-                for (const p of trail) { p.x -= speed * dt; p.life -= dt; }
-                trail = trail.filter(p => p.life > 0);
             }
 
-            function updateEffects(dt) {
-                shake = Math.max(0, shake - dt * 24);
-                flash = Math.max(0, flash - dt);
-                if (toastTime > 0) {
-                    toastTime -= dt;
-                    if (toastTime <= 0) $("toast").style.opacity = 0;
-                }
-                for (const p of particles) {
-                    p.x += p.vx * dt; p.y += p.vy * dt;
-                    p.vy += 85 * dt; p.vx *= Math.exp(-dt * 1.8); p.life -= dt;
-                }
-                particles = particles.filter(p => p.life > 0);
-                for (const l of labels) { l.y -= 28 * dt; l.life -= dt; }
-                labels = labels.filter(l => l.life > 0);
-            }
-
-            function drawGate(gate) {
-                const m = MAPS[selected], x = gate.x, w = gate.w;
-                const top = gate.cy - gate.gap / 2;
-                const bottom = gate.cy + gate.gap / 2;
-
-                function column(y, height, edge, upper) {
-                    if (height <= 0) return;
-                    const grad = ctx.createLinearGradient(x, 0, x + w, 0);
-                    grad.addColorStop(0, m.ground);
-                    grad.addColorStop(.45, m.sky[1]);
-                    grad.addColorStop(1, m.ground);
-                    ctx.fillStyle = grad;
-                    roundRect(ctx, x, y, w, height, 8); ctx.fill();
-
-                    ctx.save();
-                    roundRect(ctx, x, y, w, height, 8); ctx.clip();
-                    ctx.fillStyle = "#ffffff0a"; ctx.fillRect(x + 5, y, 10, height);
-
-                    if (m.kind === "ice" || m.kind === "space") {
-                        ctx.strokeStyle = m.accent + "38"; ctx.lineWidth = 1;
-                        for (let k = 0; k < height / 70 + 1; k++) {
-                            const yy = y + k * 70;
-                            ctx.beginPath(); ctx.moveTo(x + 8, yy);
-                            ctx.lineTo(x + w - 9, yy + 40); ctx.lineTo(x + 18, yy + 82); ctx.stroke();
-                        }
-                    } else if (m.kind === "wood") {
-                        ctx.fillStyle = "#27182f45";
-                        ctx.fillRect(x + 14, y, 7, height);
-                        ctx.fillRect(x + w - 23, y, 4, height);
-                        ctx.fillStyle = m.accent + "45";
-                        for (let yy = y + 30; yy < y + height; yy += 68)
-                            ctx.fillRect(x, yy, w, 5);
-                    } else if (m.kind === "neon") {
-                        ctx.fillStyle = m.second + "55";
-                        for (let yy = y + 15; yy < y + height - 10; yy += 30) {
-                            ctx.fillRect(x + 13, yy, 10, 14);
-                            ctx.fillRect(x + w - 25, yy, 10, 14);
-                        }
-                        ctx.fillStyle = m.accent; ctx.fillRect(x + 4, y, 2, height);
-                    } else {
-                        ctx.strokeStyle = "#00000025"; ctx.lineWidth = 3;
-                        for (let yy = y + 25, n = 0; yy < y + height; yy += 42, n++) {
-                            ctx.beginPath(); ctx.moveTo(x, yy); ctx.lineTo(x + w, yy);
-                            ctx.moveTo(x + w * (n % 2 ? .35 : .7), yy);
-                            ctx.lineTo(x + w * (n % 2 ? .35 : .7), yy + 42); ctx.stroke();
-                        }
-                    }
-                    ctx.restore();
-                    ctx.strokeStyle = m.accent + "55"; ctx.lineWidth = 1;
-                    roundRect(ctx, x + .5, y + .5, w - 1, height - 1, 8); ctx.stroke();
-
-                    // The luminous cap stays inside the collision rectangle.
-                    ctx.save();
-                    if (!reduced) { ctx.shadowColor = m.accent; ctx.shadowBlur = 13; }
-                    ctx.fillStyle = m.accent;
-                    roundRect(ctx, x + 3, edge - (upper ? 7 : 0), w - 6, 7, 3); ctx.fill();
-                    ctx.restore();
-                }
-                column(-12, top + 12, top, true);
-                column(bottom, H - bottom + 12, bottom, false);
-
-                if (!gate.collected && !gate.missed) {
-                    const rx = x + w / 2, ry = gate.cy;
-                    const color = gate.polarity > 0 ? "#ffdf9b" : "#c8b2ff";
-                    const pulse = 1 + Math.sin(visualTime * 4 + gate.id) * .06;
-                    ctx.save();
-                    ctx.translate(rx, ry); ctx.scale(pulse, pulse);
-                    if (!reduced) { ctx.shadowColor = color; ctx.shadowBlur = 15; }
-                    ctx.strokeStyle = color; ctx.lineWidth = 2.4;
-                    ctx.beginPath(); ctx.ellipse(0, 0, 21, 27, 0, 0, TAU); ctx.stroke();
-                    ctx.shadowBlur = 0;
-                    ctx.strokeStyle = color + "55"; ctx.lineWidth = 1;
-                    ctx.beginPath(); ctx.ellipse(0, 0, 27, 33, 0, 0, TAU); ctx.stroke();
-                    ctx.fillStyle = color; ctx.font = "bold 20px system-ui";
-                    ctx.textAlign = "center"; ctx.textBaseline = "middle";
-                    ctx.fillText(gate.polarity > 0 ? "↓" : "↑", 0, 0);
-                    ctx.restore();
-                }
-            }
-
-            function drawBird(x, y, scale = 1, menuBird = false) {
-                const m = MAPS[selected];
-                const gravity = menuBird ? 1 : bird.gravity;
-                const phase = !menuBird && bird.dash > 0;
-                const tilt = menuBird ? Math.sin(visualTime * 2) * .1 : bird.rotation;
-                const wingPos = menuBird ? Math.sin(visualTime * 8) : Math.sin(visualTime * 15) * .3 + wing;
-                ctx.save();
-                ctx.translate(x, y); ctx.rotate(tilt); ctx.scale(scale, scale * gravity);
-                if (!menuBird && invulnerable > 0 && Math.sin(visualTime * 25) > 0)
-                    ctx.globalAlpha = .45;
-
-                if (phase) {
-                    ctx.strokeStyle = "#c1ffff"; ctx.lineWidth = 2;
-                    if (!reduced) { ctx.shadowColor = "#aaffff"; ctx.shadowBlur = 20; }
-                    ctx.beginPath(); ctx.ellipse(0, 0, 31, 26, 0, 0, TAU); ctx.stroke();
-                    ctx.shadowBlur = 0;
-                }
-
-                // Three animated tail feathers.
-                for (let i = 0; i < 3; i++) {
-                    ctx.fillStyle = i % 2 ? "#83e7ce" : "#6688c9";
-                    ctx.beginPath(); ctx.moveTo(-13, 2);
-                    ctx.lineTo(-35 - i * 3, -6 + i * 8 + wingPos * 4);
-                    ctx.lineTo(-20, 12); ctx.closePath(); ctx.fill();
-                }
-
-                const bg = ctx.createLinearGradient(-10, -18, 10, 20);
-                bg.addColorStop(0, "#fff7d7"); bg.addColorStop(.5, "#ffdc91");
-                bg.addColorStop(1, "#efa66b");
-                if (!reduced) { ctx.shadowColor = "#ffe3a655"; ctx.shadowBlur = 13; }
-                ellipse(ctx, 0, 0, 21, 17, bg, -.08);
-                ctx.shadowBlur = 0;
-                ellipse(ctx, 7, 6, 12, 9, "#fff3d3");
-
-                ctx.save();
-                ctx.translate(-7, 3); ctx.rotate(-.35 - wingPos * .8);
-                ellipse(ctx, -4, 2, 14, 8, "#4faeae", -.2);
-                ellipse(ctx, -6, 0, 10, 3.5, "#9bf0d4", -.2);
-                ctx.restore();
-
-                // A tiny crest, goggles, and beak.
-                ctx.fillStyle = "#ffe8ae";
-                ctx.beginPath(); ctx.moveTo(-5, -13); ctx.lineTo(-11, -26);
-                ctx.lineTo(3, -16); ctx.lineTo(3, -24); ctx.lineTo(11, -13);
-                ctx.closePath(); ctx.fill();
-                ellipse(ctx, 11, -5, 9, 9, "#25344e");
-                ellipse(ctx, 12, -5, 6, 6, "#90e0db");
-                ellipse(ctx, 14, -7, 2.3, 2.3, "#f7ffff");
-                ctx.strokeStyle = "#25344e"; ctx.lineWidth = 3;
-                ctx.beginPath(); ctx.moveTo(2, -6); ctx.lineTo(-17, -8); ctx.stroke();
-                ctx.fillStyle = "#f28d68";
-                ctx.beginPath(); ctx.moveTo(19, 0); ctx.lineTo(31, 4); ctx.lineTo(18, 8);
-                ctx.closePath(); ctx.fill();
-                ctx.restore();
-            }
-
-            function draw() {
-                const sx = canvas.width / W, sy = canvas.height / H;
-                ctx.setTransform(sx, 0, 0, sy, 0, 0);
-                ctx.clearRect(0, 0, W, H);
-                const sceneryTravel = state === "menu" ? visualTime * 26 : distance;
-                background(ctx, W, H, selected, visualTime, sceneryTravel);
-
-                if (state === "menu") {
-                    drawBird(W * .79, H * .36 + Math.sin(visualTime * 1.8) * 14, 2.5, true);
-                    return;
-                }
-
-                ctx.save();
-                if (shake > 0 && !reduced) ctx.translate(rand(-shake, shake), rand(-shake, shake));
-
-                const m = MAPS[selected];
-                const edgeGradient = ctx.createLinearGradient(0, 0, 0, ceiling() + 20);
-                edgeGradient.addColorStop(0, "#071020aa"); edgeGradient.addColorStop(1, "#07102000");
-                ctx.fillStyle = edgeGradient; ctx.fillRect(0, 0, W, ceiling() + 20);
-                const bottomGradient = ctx.createLinearGradient(0, floor() - 20, 0, H);
-                bottomGradient.addColorStop(0, "#07102000"); bottomGradient.addColorStop(1, "#071020bb");
-                ctx.fillStyle = bottomGradient; ctx.fillRect(0, floor() - 20, W, H - floor() + 20);
-
-                ctx.strokeStyle = m.accent + "38"; ctx.lineWidth = 1;
-                ctx.setLineDash([4, 11]);
-                ctx.beginPath(); ctx.moveTo(0, ceiling()); ctx.lineTo(W, ceiling());
-                ctx.moveTo(0, floor()); ctx.lineTo(W, floor()); ctx.stroke();
-                ctx.setLineDash([]);
-
-                for (const gate of gates) drawGate(gate);
-
-                for (const p of trail) {
-                    ctx.globalAlpha = p.life / p.maxLife * (p.phase ? .5 : .23);
-                    ellipse(ctx, p.x, p.y, p.phase ? 20 : 10, p.phase ? 9 : 5,
-                        p.phase ? "#baffff" : m.accent);
-                }
-                ctx.globalAlpha = 1;
-
-                if (bird && state !== "dying" && state !== "over") {
-                    const by = bird.y + (state === "ready" ? Math.sin(visualTime * 3) * 7 : 0);
-                    drawBird(bird.x, by);
-                    if (combo > 1) {
-                        ctx.textAlign = "center"; ctx.font = "bold 13px system-ui";
-                        ctx.fillStyle = "#ffe2a6"; ctx.fillText("×" + combo, bird.x, by - 40);
-                    }
-                }
-
-                for (const p of particles) {
-                    ctx.globalAlpha = clamp(p.life / p.maxLife, 0, 1);
-                    ellipse(ctx, p.x, p.y, p.r, p.r, p.color);
-                }
-                ctx.globalAlpha = 1;
-                for (const label of labels) {
-                    ctx.globalAlpha = Math.min(label.life * 2, 1);
-                    ctx.fillStyle = label.color;
-                    ctx.font = "800 14px system-ui"; ctx.textAlign = "center";
-                    ctx.shadowColor = "#071020"; ctx.shadowBlur = 8;
-                    ctx.fillText(label.text, label.x, label.y);
-                }
-                ctx.globalAlpha = 1; ctx.shadowBlur = 0;
-                ctx.restore();
-
-                if (flash > 0 && !reduced) {
-                    ctx.fillStyle = `rgba(255,225,205,${flash * 1.2})`;
-                    ctx.fillRect(0, 0, W, H);
-                }
+            function intersects(x, y, radius, rx, ry, rw, rh) {
+                const dx = x - clamp(x, rx, rx + rw);
+                const dy = y - clamp(y, ry, ry + rh);
+                return dx * dx + dy * dy < radius * radius;
             }
 
             function updateHUD() {
-                if (!bird || state === "menu") return;
-                $("score").textContent = score.toLocaleString();
-                $("runInfo").textContent = practice
-                    ? `PRACTICE · ${cleared} GATES`
-                    : `${cleared} GATES · BEST ${bests[selected]}`;
-                $("energyText").textContent = Math.floor(bird.energy);
-                $("energyFill").style.width = bird.energy + "%";
-                $("energyFill").style.background = bird.energy >= 40 ? MAPS[selected].accent : "#ff9ba8";
-                $("gravityLabel").textContent = bird.gravity === 1
-                    ? "↓ GRAVITY · NORMAL" : "↑ GRAVITY · INVERTED";
-                $("dashTouch").disabled = state !== "playing" || bird.energy < 40 || dashCooldown > 0;
-                $("flipTouch").disabled = state !== "playing" || flipCooldown > 0;
+                $("score").textContent = `${letters} ${letters === 1 ? "letter" : "letters"}`;
+                $("progress").textContent = `ORCHARD GATES · ${gateCount} / 12`;
+                $("gravityNote").innerHTML = bird?.gravity < 0
+                    ? "The sky is your floor.<br>Mind your hat."
+                    : "A little flap.<br>A little courage.";
             }
 
-            function updateSettings() {
-                $("soundMenu").textContent = "Sound: " + (muted ? "off" : "on");
-                $("soundHud").textContent = muted ? "♪ ×" : "♪";
-                $("soundHud").setAttribute("aria-label", muted ? "Enable sound" : "Mute sound");
-                $("fxMenu").textContent = "FX: " + (reduced ? "reduced" : "full");
-            }
-            function toggleSound() {
-                muted = !muted;
-                if (master && audio) master.gain.setValueAtTime(muted ? 0 : .20, audio.currentTime);
-                if (!muted) unlockAudio();
-                updateSettings(); save();
-            }
+            function simulate(dt) {
+                if (state !== "playing") return;
 
-            $("start").onclick = startGame;
-            $("retry").onclick = startGame;
-            $("home").onclick = home;
-            $("pauseHome").onclick = home;
-            $("pause").onclick = pauseGame;
-            $("resume").onclick = resumeGame;
-            $("soundMenu").onclick = toggleSound;
-            $("soundHud").onclick = toggleSound;
-            $("fxMenu").onclick = () => {
-                reduced = !reduced; updateSettings(); save();
-            };
+                elapsed += dt;
+                flapCooldown = Math.max(0, flapCooldown - dt);
+                flipCooldown = Math.max(0, flipCooldown - dt);
 
-            // Pointer Events cover mouse, touch, and pen without duplicate tap handlers.
-            function bindPress(id, action) {
-                $(id).addEventListener("pointerdown", e => {
-                    if (e.button !== 0) return;
-                    e.preventDefault(); e.stopPropagation();
-                    unlockAudio(); action();
-                });
-                $(id).addEventListener("click", e => {
-                    if (e.detail === 0) action(); // Keyboard activation.
-                });
-            }
-            bindPress("flapTouch", flap);
-            bindPress("flipTouch", flip);
-            bindPress("dashTouch", dash);
-            canvas.addEventListener("pointerdown", e => {
-                e.preventDefault();
-                if (e.button === 2) flip(); else if (e.button === 0) flap();
-            });
-            canvas.addEventListener("contextmenu", e => e.preventDefault());
+                if (flapBuffer > 0 && flapCooldown === 0) {
+                    bird.vy = -bird.gravity * 290;
+                    bird.flap = 1;
+                    bird.bagVelocity += bird.gravity * 2.2;
+                    flapCooldown = .115;
+                    flapBuffer = 0;
+                    note(430, .075, .018, 300);
+                }
+                flapBuffer = Math.max(0, flapBuffer - dt);
 
-            addEventListener("keydown", e => {
-                const tag = document.activeElement?.tagName;
-                if (tag === "SELECT" || tag === "INPUT") return;
-                const key = e.code;
-                const gameKeys = ["Space", "ArrowUp", "KeyW", "KeyF", "KeyD",
-                    "ShiftLeft", "ShiftRight", "KeyP", "Escape", "KeyR"];
-                if (gameKeys.includes(key) && state !== "menu") e.preventDefault();
-                if (e.repeat) return;
-                if (key === "KeyM") { toggleSound(); return; }
-                if (key === "Escape" || key === "KeyP") {
-                    if (state === "paused") resumeGame(); else pauseGame();
+                bird.vy += 835 * bird.gravity * dt;
+                bird.vy *= Math.exp(-.08 * dt);
+                bird.vy = clamp(bird.vy, -455, 455);
+                bird.y += bird.vy * dt;
+                bird.flap = Math.max(0, bird.flap - dt * 4.6);
+
+                bird.angle = lerp(
+                    bird.angle,
+                    clamp(bird.vy / 850, -.35, .48),
+                    1 - Math.exp(-10 * dt)
+                );
+
+                bird.roll = lerp(bird.roll, bird.targetRoll, 1 - Math.exp(-13 * dt));
+                bird.bagVelocity += (
+                    -bird.bagAngle * 35 - bird.bagVelocity * 6 +
+                    bird.vy * .006
+                ) * dt;
+                bird.bagAngle += bird.bagVelocity * dt;
+                bird.tail = lerp(bird.tail, bird.vy / 500, 1 - Math.exp(-5 * dt));
+
+                const speed = 213 * paceScale();
+                scroll += speed * dt;
+
+                if (bird.y < TOP + 10 || bird.y > BOTTOM - 10) {
+                    crash();
                     return;
                 }
-                if (state === "over" && (key === "KeyR" || key === "Space")) {
-                    startGame(); return;
+
+                for (const gate of gates) {
+                    gate.x -= speed * dt;
+                    const upper = gate.y - gate.gap / 2;
+                    const lower = gate.y + gate.gap / 2;
+
+                    // Generous body-only collision. Feathers, leaves, and scarf are decorative.
+                    if (
+                        intersects(bird.x, bird.y, 10, gate.x - 18, -50, 36, upper + 44) ||
+                        intersects(bird.x, bird.y, 10, gate.x - 18, lower + 6, 36, H - lower)
+                    ) {
+                        crash();
+                        return;
+                    }
+
+                    if (!gate.collected &&
+                        Math.hypot(bird.x - gate.x, bird.y - gate.y) < 35) {
+                        gate.collected = true;
+                        letters++;
+                        points += 25;
+                        notices.push({ x: gate.x, y: gate.y - 28, life: 1.2, text: "A letter saved." });
+                        note(740, .16, .045, 880);
+                        updateHUD();
+                    }
+
+                    if (!gate.passed && gate.x + 27 < bird.x - 10) {
+                        gate.passed = true;
+                        gateCount++;
+                        points += 10;
+                        updateHUD();
+
+                        if (gateCount === 2)
+                            hint("F turns gravity over. Useful when the sky feels too close.", 4);
+                        if (gateCount === 6)
+                            hint("Halfway. Someone is putting the kettle on.", 3.2);
+                        if (gateCount === 10)
+                            hint("The Orchard Office is just ahead.", 3);
+
+                        if (gateCount === ROUTE.length) {
+                            finish(true);
+                            return;
+                        }
+                    }
                 }
-                if (state === "playing" || state === "ready") {
-                    if (["Space", "ArrowUp", "KeyW"].includes(key)) flap();
-                    if (key === "KeyF") flip();
-                    if (["KeyD", "ShiftLeft", "ShiftRight"].includes(key)) dash();
+            }
+
+            function effects(dt) {
+                if (state === "paused") return;
+
+                time += dt;
+
+                if (hintClock > 0 && state !== "ready") {
+                    hintClock -= dt;
+                    if (hintClock <= 0) $("hint").hidden = true;
                 }
+
+                for (const f of feathers) {
+                    f.x += f.vx * dt;
+                    f.y += f.vy * dt;
+                    f.vx *= Math.exp(-dt * 1.8);
+                    f.vy += 165 * dt;
+                    f.angle += f.turn * dt;
+                    f.life -= dt;
+                }
+                feathers = feathers.filter(f => f.life > 0);
+
+                for (const n of notices) {
+                    n.y -= dt * 24;
+                    n.life -= dt;
+                }
+                notices = notices.filter(n => n.life > 0);
+
+                if (state === "falling") {
+                    deathClock += dt;
+                    bird.vy += 800 * dt;
+                    bird.y = Math.min(BOTTOM - 10, bird.y + bird.vy * dt);
+                    bird.angle += dt * 3;
+                    if (deathClock > .85) finish(false);
+                }
+            }
+
+            function hill(base, amplitude, color, speed, phase) {
+                path(p => {
+                    p.moveTo(-20, H);
+                    for (let x = -20; x <= W + 30; x += 20) {
+                        const pos = x + scroll * speed;
+                        const y = base +
+                            Math.sin(pos * .004 + phase) * amplitude +
+                            Math.sin(pos * .009 + phase) * amplitude * .25;
+                        p.lineTo(x, y);
+                    }
+                    p.lineTo(W + 30, H);
+                    p.closePath();
+                }, color, "#6f785b25", 1);
+            }
+
+            function cloud(x, y, scale) {
+                c.save();
+                c.translate(x, y);
+                c.scale(scale, scale);
+                path(p => {
+                    p.moveTo(-85, 13);
+                    p.bezierCurveTo(-100, -5, -71, -17, -48, -11);
+                    p.bezierCurveTo(-49, -40, -9, -46, 7, -26);
+                    p.bezierCurveTo(30, -39, 60, -20, 58, -7);
+                    p.bezierCurveTo(91, -14, 105, 12, 78, 18);
+                    p.bezierCurveTo(32, 25, -45, 25, -85, 13);
+                }, "#faf1d9", "#b5ad8a70", 1);
+
+                line(-59, 13, 65, 14, "#c6bc9b70", .7);
+                line(-35, 19, 38, 20, "#c6bc9b50", .7);
+                c.restore();
+            }
+
+            function cottage(x, y, s) {
+                c.save();
+                c.translate(x, y);
+                c.scale(s, s);
+
+                path(p => {
+                    p.moveTo(-37, 0); p.lineTo(-37, -53);
+                    p.lineTo(33, -53); p.lineTo(35, 0); p.closePath();
+                }, "#e1d4af", "#777b6080");
+
+                path(p => {
+                    p.moveTo(-47, -49); p.lineTo(-4, -86);
+                    p.lineTo(43, -49); p.closePath();
+                }, "#aa7560", "#77715c");
+
+                c.fillStyle = "#a18065";
+                c.fillRect(15, -86, 9, 26);
+                c.fillStyle = "#6f7861";
+                c.fillRect(-4, -28, 15, 28);
+                c.fillStyle = "#ead9a3";
+                c.fillRect(-25, -36, 12, 14);
+
+                line(-19, -36, -19, -22, "#8b876a");
+                line(-25, -29, -13, -29, "#8b876a");
+
+                for (let i = 0; i < 4; i++)
+                    line(-27 + i * 15, -53, -5 + i * 9, -73, "#895e4b65", 1);
+
+                c.restore();
+            }
+
+            function orchardTree(x, y, s, id) {
+                c.save();
+                c.translate(x, y);
+                c.scale(s, s);
+
+                path(p => {
+                    p.moveTo(-9, 0); p.lineTo(-5, -120);
+                    p.lineTo(8, -124); p.lineTo(13, 0); p.closePath();
+                }, "#8e8c6c", "#71785b80");
+
+                line(0, -72, -39, -129, "#7b8264", 8);
+                line(5, -91, 39, -140, "#7b8264", 7);
+
+                for (let i = 0; i < 10; i++) {
+                    const a = i / 10 * TAU;
+                    oval(
+                        Math.cos(a) * 45,
+                        -144 + Math.sin(a) * 31,
+                        35 + seed(id * 30 + i) * 12,
+                        28,
+                        i % 3 ? "#a2ac82" : "#b5ba8c",
+                        "#79856040"
+                    );
+                }
+
+                for (let i = 0; i < 7; i++) {
+                    const xx = (seed(i + id * 11) - .5) * 110;
+                    const yy = -169 + seed(i + id * 17 + 9) * 62;
+                    oval(xx, yy, 4, 5, "#ae735b");
+                    line(xx, yy - 4, xx + 2, yy - 8, "#657456", 1);
+                }
+
+                c.restore();
+            }
+
+            function mailbox(x, y, scale = 1) {
+                c.save();
+                c.translate(x, y);
+                c.scale(scale, scale);
+
+                path(p => {
+                    p.moveTo(-5, 0); p.lineTo(-3, -80);
+                    p.lineTo(6, -80); p.lineTo(8, 0); p.closePath();
+                }, "#a18b66");
+
+                path(p => {
+                    p.moveTo(-27, -73); p.lineTo(-27, -112);
+                    p.bezierCurveTo(-27, -139, 26, -139, 26, -112);
+                    p.lineTo(27, -73); p.closePath();
+                }, RED);
+
+                line(-17, -107, 14, -108, "#603e32", 4);
+                c.fillStyle = "#eee0bc";
+                c.fillRect(-13, -95, 24, 13);
+                text("POST", -1, -85, 7, "#7b6651");
+                c.restore();
+            }
+
+            function scenery() {
+                const sky = c.createLinearGradient(0, 0, 0, H);
+                sky.addColorStop(0, "#dce0c9");
+                sky.addColorStop(.65, "#eee4c8");
+                sky.addColorStop(1, "#ede1bd");
+                c.fillStyle = sky;
+                c.fillRect(0, 0, W, H);
+
+                oval(W * .78, 137, 48, 48, "#e6c68b");
+                oval(W * .78, 137, 55, 55, null, "#d0b78155");
+
+                for (let i = 0; i < 6; i++) {
+                    const span = W + 340;
+                    const x = mod(i * 267 - scroll * .075, span) - 170;
+                    cloud(x, 100 + seed(i + 90) * 165, .65 + seed(i + 8) * .45);
+                }
+
+                // Small distant birds, kept quiet in the composition.
+                for (let i = 0; i < 4; i++) {
+                    const x = mod(350 + i * 29 - scroll * .04, W + 80) - 40;
+                    const y = 211 + i % 2 * 13;
+                    path(p => {
+                        p.moveTo(x - 6, y + 2);
+                        p.quadraticCurveTo(x - 3, y - 3, x, y);
+                        p.quadraticCurveTo(x + 3, y - 3, x + 7, y + 1);
+                    }, null, "#80877180", 1);
+                }
+
+                hill(447, 43, "#c5c9a2", .12, .5);
+                hill(490, 35, "#afb992", .20, 2);
+
+                for (let i = 0; i < Math.ceil(W / 440) + 2; i++) {
+                    const x = i * 440 - mod(scroll * .22, 440) - 100;
+                    cottage(x, 490 + Math.sin(i * 3) * 15, .72);
+                }
+
+                hill(540, 24, "#9eae80", .30, 4);
+
+                for (let i = -1; i < Math.ceil(W / 255) + 2; i++) {
+                    const x = i * 255 - mod(scroll * .38, 255);
+                    orchardTree(x, 592, .74, i + Math.floor(scroll * .38 / 255) + 30);
+                }
+
+                // Quiet pencil line indicating the upper flight boundary.
+                line(0, TOP, W, TOP, "#8e94702e", 1);
+            }
+
+            function foreground() {
+                path(p => {
+                    p.moveTo(0, BOTTOM + 4);
+                    for (let x = 0; x <= W + 8; x += 8) {
+                        p.lineTo(x, BOTTOM + 4 + Math.sin((x + scroll) * .025) * 3);
+                    }
+                    p.lineTo(W + 8, H); p.lineTo(0, H); p.closePath();
+                }, "#b0b58b", "#79875d", 1.5);
+
+                for (let i = -1; i < Math.ceil(W / 31) + 2; i++) {
+                    const id = i + Math.floor(scroll * .9 / 31);
+                    const x = i * 31 - mod(scroll * .9, 31);
+                    const y = 642 + seed(id + 300) * 60;
+                    const h = 7 + seed(id + 600) * 13;
+
+                    line(x, y, x - 3, y - h, "#77875890", 1);
+                    line(x, y, x + 5, y - h * .7, "#77875890", 1);
+
+                    if (seed(id + 900) > .72) {
+                        oval(x - 3, y - h, 3.5, 3, "#eee3bd");
+                        oval(x - 3, y - h, 1, 1, "#bb935c");
+                    }
+                }
+
+                if (state === "menu") mailbox(W * .14, BOTTOM + 24, 1.15);
+
+                // Foreground texture unifies the scene like a printed illustration.
+                c.fillStyle = paperPattern;
+                c.fillRect(0, 0, W, H);
+            }
+
+            function leaf(x, y, angle, size, color) {
+                c.save();
+                c.translate(x, y);
+                c.rotate(angle);
+
+                path(p => {
+                    p.moveTo(-size, 0);
+                    p.quadraticCurveTo(0, -size * .8, size, 0);
+                    p.quadraticCurveTo(0, size * .8, -size, 0);
+                }, color, "#5d6d4a80", .8);
+
+                line(-size * .7, 0, size * .7, 0, "#586c4550", .7);
+                c.restore();
+            }
+
+            function trunk(x, tip, upper, id) {
+                c.save();
+                c.translate(x, tip);
+                if (upper) c.scale(1, -1);
+
+                const length = upper ? tip + 25 : H - tip + 25;
+
+                // Asymmetric silhouette, with a collision core smaller than the drawing.
+                path(p => {
+                    p.moveTo(-24, length);
+                    p.bezierCurveTo(-31, length * .68, -21, 70, -24, 20);
+                    p.quadraticCurveTo(-23, -1, -7, 0);
+                    p.lineTo(12, 3);
+                    p.quadraticCurveTo(28, 2, 25, 24);
+                    p.bezierCurveTo(20, 85, 33, length * .65, 28, length);
+                    p.closePath();
+                }, "#a18b62", "#55543d", 2);
+
+                path(p => {
+                    p.moveTo(-11, length);
+                    p.bezierCurveTo(-18, length * .55, -8, 75, -12, 17);
+                    p.moveTo(13, length);
+                    p.bezierCurveTo(6, length * .6, 16, 81, 10, 24);
+                }, null, "#756b4c", 1);
+
+                for (let i = 0; i < Math.floor(length / 47); i++) {
+                    const y = 34 + i * 47;
+                    const side = i % 2 ? 1 : -1;
+                    line(side * 13, y, side * 20, y + 19, "#c1ab7b", 2);
+                    if (i % 3 === 0) {
+                        oval(side * 3, y + 16, 5, 10, "#8f7b54", "#6e6749", .15);
+                        line(side * 3, y + 10, side * 3 + 1, y + 21, "#b7a172", 1);
+                    }
+                }
+
+                // Leaves sit along the wood, never across the opening.
+                for (let i = 0; i < Math.floor(length / 55); i++) {
+                    const y = 40 + i * 55;
+                    const side = i % 2 ? -1 : 1;
+                    const sway = reduced ? 0 : Math.sin(time * 1.8 + i + id) * .04;
+                    line(side * 20, y + 15, side * 33, y + 5, "#67734d", 1.5);
+                    leaf(side * 34, y + 4, side * .45 + sway, 12, "#7f925d");
+                    leaf(side * 29, y + 15, -side * .6, 9, "#a1aa70");
+                }
+
+                // Uneven moss at the tip.
+                for (let i = 0; i < 5; i++)
+                    oval(-17 + i * 8, 10 + seed(i + id * 4) * 5, 6, 4, "#7d8d57");
+
+                c.restore();
+            }
+
+            function envelope(x, y, rotation = 0, scale = 1) {
+                c.save();
+                c.translate(x, y);
+                c.rotate(rotation);
+                c.scale(scale, scale);
+
+                path(p => {
+                    p.moveTo(-16, -10); p.lineTo(17, -9);
+                    p.lineTo(16, 11); p.lineTo(-17, 10); p.closePath();
+                }, "#f8edcf", "#776b50", 1.2);
+
+                line(-16, -9, 0, 3, "#a29471", 1);
+                line(17, -9, 0, 3, "#a29471", 1);
+                line(-16, 10, -4, 0, "#c1b28d", .8);
+                line(16, 10, 5, 0, "#c1b28d", .8);
+                oval(0, 3, 3, 3, RED);
+                c.restore();
+            }
+
+            function drawGates() {
+                for (const g of gates) {
+                    if (g.x < -80 || g.x > W + 80) continue;
+                    trunk(g.x, g.y - g.gap / 2, true, g.index * 2);
+                    trunk(g.x, g.y + g.gap / 2, false, g.index * 2 + 1);
+
+                    if (!g.collected) {
+                        const bob = reduced ? 0 : Math.sin(time * 2 + g.index) * 4;
+                        envelope(g.x, g.y + bob, Math.sin(time + g.index) * .07);
+
+                        // Delicate pencil marks, not a glowing collectible aura.
+                        line(g.x - 26, g.y - 4, g.x - 30, g.y - 6, "#aa95645a", 1);
+                        line(g.x + 25, g.y + 3, g.x + 29, g.y + 5, "#aa95645a", 1);
+                    }
+                }
+            }
+
+            function drawBird(x, y, demo = false) {
+                const b = bird;
+                const flap = demo ? (Math.sin(time * 5) + 1) / 2 : b.flap;
+                const roll = demo ? 0 : b.roll;
+                const tilt = demo ? -.07 : b.angle;
+                const tail = demo ? Math.sin(time * 2) * .1 : b.tail;
+                const bag = demo ? Math.sin(time * 2) * .12 : b.bagAngle;
+
+                c.save();
+                c.translate(x, y);
+                c.rotate(tilt);
+
+                // Rolling about the direction of flight keeps the beak facing forward.
+                c.scale(1, Math.cos(roll));
+
+                // Forked swallow tail.
+                path(p => {
+                    p.moveTo(-13, 1);
+                    p.lineTo(-40, -6 + tail * 8);
+                    p.lineTo(-30, 6 + tail * 8);
+                    p.lineTo(-44, 15 + tail * 7);
+                    p.lineTo(-14, 12); p.closePath();
+                }, "#4d625c", "#3d4941");
+
+                line(-29, 7, -19, 7, "#9aab8b", 1);
+
+                // Back wing, lighter and slightly out of phase.
+                path(p => {
+                    p.moveTo(-4, 1);
+                    p.quadraticCurveTo(-28, -13 - flap * 22, -19, -23 - flap * 18);
+                    p.quadraticCurveTo(4, -15, 8, 3);
+                }, "#81917a", "#526252", 1.3);
+
+                // Scarf tails, animated separately from the body.
+                const flutter = reduced ? 0 : Math.sin(time * 12) * 3;
+                path(p => {
+                    p.moveTo(4, 6);
+                    p.quadraticCurveTo(-15, 12, -31, 8 + flutter);
+                    p.lineTo(-26, 17 + flutter);
+                    p.quadraticCurveTo(-8, 20, 8, 10);
+                }, "#b85f49", "#814c38", 1.2);
+
+                // Main body: deliberately uneven, not a perfect ellipse.
+                path(p => {
+                    p.moveTo(-20, 0);
+                    p.bezierCurveTo(-19, -13, -4, -18, 8, -13);
+                    p.bezierCurveTo(15, -21, 26, -17, 27, -6);
+                    p.bezierCurveTo(30, 10, 12, 18, -2, 17);
+                    p.bezierCurveTo(-15, 16, -23, 8, -20, 0);
+                }, "#64796f", "#3e4b43", 1.8);
+
+                // Cream bib.
+                path(p => {
+                    p.moveTo(16, -7);
+                    p.bezierCurveTo(30, -4, 23, 12, 8, 15);
+                    p.bezierCurveTo(-2, 18, -8, 11, -5, 5);
+                    p.quadraticCurveTo(9, 8, 16, -7);
+                }, "#e8d9b2", null);
+
+                // Small crest.
+                path(p => {
+                    p.moveTo(5, -13); p.lineTo(1, -23);
+                    p.lineTo(12, -17); p.lineTo(13, -22); p.lineTo(19, -15);
+                }, "#64796f", "#3e4b43", 1.2);
+
+                // Scarf collar.
+                path(p => {
+                    p.moveTo(9, -2); p.quadraticCurveTo(15, 4, 23, 3);
+                    p.lineTo(21, 9); p.quadraticCurveTo(12, 8, 7, 3);
+                    p.closePath();
+                }, "#bc654c", "#874b38", 1);
+
+                // Satchel strap.
+                path(p => {
+                    p.moveTo(6, -9); p.quadraticCurveTo(-3, 4, -2, 19);
+                }, null, "#6e523b", 3);
+
+                // Pendulum-like satchel.
+                c.save();
+                c.translate(-4, 12);
+                c.rotate(bag);
+                path(p => {
+                    p.moveTo(-10, 0); p.lineTo(8, -1);
+                    p.lineTo(12, 17); p.lineTo(-9, 20); p.closePath();
+                }, "#b58d59", "#65523a", 1.4);
+                path(p => {
+                    p.moveTo(-10, 0); p.lineTo(8, -1);
+                    p.lineTo(7, 7); p.lineTo(-7, 9); p.closePath();
+                }, "#c6a16c", "#7e6343", 1);
+                c.fillStyle = "#e5c386";
+                c.fillRect(-1, 6, 4, 4);
+                line(-6, 14, 6, 12, "#8c714e", .8);
+                c.restore();
+
+                // Foreground wing.
+                c.save();
+                c.translate(-9, 2);
+                c.rotate(-.25 - flap * 1.15);
+                path(p => {
+                    p.moveTo(8, -5);
+                    p.bezierCurveTo(-2, -10, -21, -6, -29, 6);
+                    p.lineTo(-20, 6); p.lineTo(-23, 11);
+                    p.lineTo(-14, 9); p.lineTo(-15, 14);
+                    p.quadraticCurveTo(5, 11, 8, -5);
+                }, "#52695e", "#3d4c42", 1.3);
+                line(-19, 4, -4, -2, "#8a9d83", 1);
+                line(-14, 8, 0, 1, "#8a9d83", 1);
+                c.restore();
+
+                // Beak and eye. Occasional blink while idle.
+                path(p => {
+                    p.moveTo(25, -5); p.lineTo(37, -1);
+                    p.lineTo(26, 3); p.closePath();
+                }, "#c59a59", "#6b5c3b", 1);
+
+                const blink = demo && mod(time, 5.7) > 5.5;
+                if (blink) line(16, -8, 21, -8, "#293a33", 1.7);
+                else {
+                    oval(19, -9, 2.5, 3, "#263c35");
+                    oval(19.7, -10, .7, .7, "#fbefd0");
+                }
+
+                // Tiny cheek mark.
+                line(16, -2, 21, -1, "#b4b591", 1);
+
+                c.restore();
+            }
+
+            function draw() {
+                c.setTransform(canvas.width / W, 0, 0, canvas.height / H, 0, 0);
+                c.clearRect(0, 0, W, H);
+
+                scenery();
+
+                if (state === "menu") {
+                    const x = W < 650 ? W * .77 : W * .79;
+                    const y = W < 650 ? 565 : 345;
+                    drawBird(x, y + (reduced ? 0 : Math.sin(time * 2) * 6), true);
+                } else {
+                    drawGates();
+                    if (bird) {
+                        const bob = state === "ready" && !reduced ? Math.sin(time * 3) * 4 : 0;
+                        drawBird(bird.x, bird.y + bob);
+                    }
+                }
+
+                for (const f of feathers) {
+                    c.save();
+                    c.globalAlpha = clamp(f.life, 0, 1);
+                    c.translate(f.x, f.y);
+                    c.rotate(f.angle);
+                    oval(0, 0, 3, 10, "#718574", "#526552");
+                    line(0, -8, 0, 12, "#d6d3a8", 1);
+                    c.restore();
+                }
+
+                foreground();
+
+                for (const n of notices) {
+                    c.save();
+                    c.globalAlpha = clamp(n.life, 0, 1);
+                    text(n.text, n.x, n.y, 14, "#67583e");
+                    c.restore();
+                }
+
+                // A quiet frame, like the edge of an illustration.
+                c.strokeStyle = "#6a65422c";
+                c.lineWidth = 1;
+                c.strokeRect(8, 8, W - 16, H - 16);
+            }
+
+            function bindPress(id, action) {
+                $(id).addEventListener("pointerdown", event => {
+                    if (event.button !== 0) return;
+                    event.preventDefault();
+                    action();
+                });
+                $(id).addEventListener("click", event => {
+                    if (event.detail === 0) action();
+                });
+            }
+
+            $("start").onclick = start;
+            $("retry").onclick = start;
+            $("home").onclick = home;
+            $("pauseHome").onclick = home;
+            $("pause").onclick = pause;
+            $("resume").onclick = resume;
+            $("sound").onclick = toggleSound;
+            $("menuSound").onclick = toggleSound;
+
+            bindPress("flap", queueFlap);
+            bindPress("flip", flip);
+
+            canvas.addEventListener("pointerdown", event => {
+                if (event.button !== 0) return;
+                event.preventDefault();
+                queueFlap();
             });
+
+            addEventListener("keydown", event => {
+                // Preserve normal keyboard activation on focused UI buttons.
+                if (document.activeElement?.tagName === "BUTTON" &&
+                    ["Space", "Enter"].includes(event.code)) return;
+
+                if (["Space", "ArrowUp", "KeyF", "KeyP", "Escape"].includes(event.code))
+                    event.preventDefault();
+
+                if (event.repeat) return;
+
+                if (["Space", "ArrowUp", "KeyW"].includes(event.code)) {
+                    if (["over", "won"].includes(state)) start();
+                    else queueFlap();
+                }
+
+                if (event.code === "KeyF") flip();
+
+                if (["KeyP", "Escape"].includes(event.code)) {
+                    if (state === "paused") resume();
+                    else pause();
+                }
+
+                if (event.code === "KeyM") toggleSound();
+            });
+
+            addEventListener("blur", pause);
             document.addEventListener("visibilitychange", () => {
-                if (document.hidden) pauseGame();
-                frameLast = 0; accumulator = 0;
+                if (document.hidden) pause();
+                lastTime = null;
+                accumulator = 0;
             });
-            addEventListener("blur", pauseGame);
 
-            // Fixed-step simulation; rendering follows the display refresh rate.
-            let hudClock = 0;
             function frame(now) {
-                if (!frameLast) frameLast = now;
-                const dt = Math.min((now - frameLast) / 1000, .1);
-                frameLast = now;
+                const dt = lastTime === null ? 0 : Math.min((now - lastTime) / 1000, .06);
+                lastTime = now;
 
-                if (state !== "paused") {
-                    visualTime += dt;
-                    updateEffects(dt);
-                }
+                effects(dt);
+
                 if (state === "playing") {
                     accumulator += dt;
-                    let steps = 0;
-                    while (accumulator >= STEP && steps < 12) {
-                        updateGame(STEP);
+                    while (accumulator >= STEP && state === "playing") {
+                        simulate(STEP);
                         accumulator -= STEP;
-                        steps++;
-                        if (state !== "playing") { accumulator = 0; break; }
                     }
                 } else accumulator = 0;
 
-                hudClock += dt;
-                if (hudClock >= .05) { updateHUD(); hudClock = 0; }
                 draw();
                 requestAnimationFrame(frame);
             }
 
             resize();
-            buildMapMenu();
-            updateSettings();
             requestAnimationFrame(frame);
         })();
     </script>
