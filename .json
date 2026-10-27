@@ -1,0 +1,9 @@
+{
+    "name": "flipping-bird",
+    "version": "1.0.0",
+    "private": true,
+    "description": "FLIPSIDE — Seven Skies: a gravity-flipping browser game.",
+    "scripts": {
+        "screenshots": "node scripts/screenshots.mjs"
+    }
+}
